@@ -45,8 +45,11 @@
   <script type="text/babel">
     const { useEffect, useRef, useState, useCallback, forwardRef } = React;
     gsap.registerPlugin(ScrollTrigger);
-    /* ── Sostituisci con il data:image/png;base64,... completo dal file scaricato ── */
-    const FLOWERS = "data:image/png;base64,iVBORw0KGgo...";
+    
+    /* ── Sostituisci il contenuto tra i backtick ( ` ) con il tuo data:image completo ── */
+    /* Usare i backtick evita SyntaxError nel caso la stringa vada a capo */
+    const FLOWERS = `data:image/png;base64,iVBORw0KGgo...`;
+    
     const MUSIC_URL = "https://res.cloudinary.com/dvjgznbzm/video/upload/v1774795778/paulyudin-romantic-piano-164822_ytzzn3.mp3";
     const VIDEO_URL = "https://res.cloudinary.com/dvjgznbzm/video/upload/v1774820579/busta_verde_pastello_con_data_debossing_lzadff.mov";
     const PHOTOS = [
@@ -56,6 +59,7 @@
       "https://res.cloudinary.com/dvjgznbzm/image/upload/f_auto,q_auto,w_1400/v1774796847/IMG_2688_daidh8.heic",
       "https://res.cloudinary.com/dvjgznbzm/image/upload/f_auto,q_auto,w_1400/v1774796846/IMG_3396_rebrbg.heic",
     ];
+    
     /* ─────────────────── BotanicalDivider ─────────────────── */
     function BotanicalDivider({ className = "" }) {
       return (
@@ -79,6 +83,7 @@
         </div>
       );
     }
+    
     /* ─────────────────── Monogram ─────────────────── */
     const Monogram = forwardRef((props, ref) => {
       return (
@@ -90,6 +95,7 @@
         </div>
       );
     });
+    
     /* ─────────────────── Countdown ─────────────────── */
     function Countdown() {
       const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -128,6 +134,7 @@
         </div>
       );
     }
+    
     /* ─────────────────── MusicPlayer ─────────────────── */
     function MusicPlayer({ playing, onToggle }) {
       return (
@@ -148,6 +155,7 @@
         </button>
       );
     }
+    
     /* ─────────────────── CornerOrnaments ─────────────────── */
     function Corner({ flip = false }) {
       return (
@@ -172,6 +180,7 @@
         </div>
       );
     }
+    
     /* ─────────────────── PhotoGallery ─────────────────── */
     function getCardStyle(offset) {
       const abs = Math.abs(offset);
@@ -240,6 +249,7 @@
         </section>
       );
     }
+    
     /* ─────────────────── QuotesTicker ─────────────────── */
     const QUOTES = [
       { text: "E ho guardato dentro un'emozione, e ci ho visto dentro tanto amore...", author: "Vasco Rossi" },
@@ -278,6 +288,7 @@
         </div>
       );
     }
+    
     /* ─────────────────── Timeline ─────────────────── */
     const EVENTS = [
       { time: "11:30", moment: "Accoglienza",            detail: "Arrivo degli ospiti" },
@@ -347,6 +358,7 @@
         </section>
       );
     }
+    
     /* ─────────────────── RSVPForm ─────────────────── */
     function RSVPForm() {
       const [name, setName]           = useState("");
@@ -429,6 +441,7 @@
         </section>
       );
     }
+    
     /* ─────────────────── App ─────────────────── */
     function App() {
       const videoRef        = useRef(null);
@@ -447,17 +460,40 @@
         const video = videoRef.current;
         if (!video) return;
         
-        // Avvia il video automaticamente
-        video.play().catch(e => console.log("L'autoplay del video potrebbe essere bloccato dal browser:", e));
+        let fallbackTimer;
 
-        const onTime = () => {
-          if (video.currentTime >= 2 && !sequenceStarted.current) {
+        const startSequence = () => {
+          if (!sequenceStarted.current) {
             sequenceStarted.current = true;
             runCinematicSequence();
           }
         };
+
+        const onTime = () => {
+          if (video.currentTime >= 2) {
+            startSequence();
+          }
+        };
+
         video.addEventListener("timeupdate", onTime);
-        return () => video.removeEventListener("timeupdate", onTime);
+
+        // Tentativo di autoplay gestito con sicurezza per mobile
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            // Autoplay andato a buon fine, impostiamo comunque un fallback nel caso il video si blocchi in buffering
+            fallbackTimer = setTimeout(startSequence, 6000);
+          }).catch(e => {
+            console.log("Autoplay bloccato da iOS/Risparmio Energetico:", e);
+            // Autoplay bloccato (es. iOS in low power mode), forziamo l'avvio della sequenza dopo un breve ritardo
+            fallbackTimer = setTimeout(startSequence, 1000);
+          });
+        }
+
+        return () => {
+          video.removeEventListener("timeupdate", onTime);
+          if (fallbackTimer) clearTimeout(fallbackTimer);
+        };
       }, []);
 
       // Effetto per avviare la musica al primo tocco o scroll (necessario per i blocchi autoplay dei browser)
@@ -495,14 +531,18 @@
         const tl = gsap.timeline();
         tl
           .to(videoRef.current, { opacity: 0, duration: 1, ease: "power2.inOut" })
-          .set(textSaveRef.current, { display: "flex" })
+          
+          /* Animazione esplicita per evitare accavallamenti di testo */
+          .set(textSaveRef.current, { display: "flex", opacity: 0 })
           .to(textSaveRef.current, { opacity: 1, duration: 1.2 })
           .to(textSaveRef.current, { opacity: 0, duration: 0.8, delay: 1.5 })
           .set(textSaveRef.current, { display: "none" })
-          .set(textSposiamoRef.current, { display: "flex" })
+          
+          .set(textSposiamoRef.current, { display: "flex", opacity: 0 })
           .to(textSposiamoRef.current, { opacity: 1, duration: 1.2 })
-          .to(textSposiamoRef.current, { opacity: 0, duration: 1, delay: 4 })
+          .to(textSposiamoRef.current, { opacity: 0, duration: 1, delay: 3 })
           .set(textSposiamoRef.current, { display: "none" })
+          
           .to(preloaderRef.current, { opacity: 0, duration: 1.5, onComplete: () => {
             if (preloaderRef.current) preloaderRef.current.style.display = "none";
             document.body.style.overflow = "auto";
@@ -531,12 +571,14 @@
       return (
         <>
           <audio ref={bgAudioRef} src={MUSIC_URL} preload="auto" />
+          
           {/* ════ PRELOADER ════ */}
           <div ref={preloaderRef} className="fixed inset-0 z-[200] flex items-center justify-center overflow-hidden"
             style={{ backgroundColor: "#FDFBF7" }}>
             <video ref={videoRef} autoPlay muted playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover">
               <source src={VIDEO_URL} />
             </video>
+            
             {/* Save The Date */}
             <div ref={textSaveRef} className="absolute inset-0 flex-col items-center justify-center z-[300]"
               style={{ display:"none", opacity:0, pointerEvents:"none", backgroundColor:"#FDFBF7" }}>
@@ -547,6 +589,7 @@
               </div>
               <h2 className="font-sans text-2xl md:text-4xl uppercase tracking-[0.5em] font-light" style={{ color:"#A3B899" }}>Save The Date</h2>
             </div>
+            
             {/* Ci Sposiamo */}
             <div ref={textSposiamoRef} className="absolute inset-0 flex-col items-center justify-center z-[300] px-8 overflow-hidden"
               style={{ display:"none", opacity:0, pointerEvents:"none", backgroundColor:"#FDFBF7" }}>
@@ -570,8 +613,10 @@
               </div>
             </div>
           </div>
+          
           {/* ════ MAIN CONTENT ════ */}
           <div ref={mainContentRef} className="opacity-0 overflow-x-hidden" style={{ backgroundColor:"#FDFBF7" }}>
+            
             {/* HERO */}
             <section className="relative h-screen w-full flex items-center justify-center overflow-hidden" style={{ backgroundColor:"#FDFBF7" }}>
               <Monogram ref={monogramRef} />
@@ -604,7 +649,9 @@
                 }
               `}</style>
             </section>
+            
             <BotanicalDivider />
+            
             {/* COUNTDOWN */}
             <section className="py-28 px-6 text-center reveal" style={{ backgroundColor:"#FDFBF7" }}>
               <div className="stagger-group">
@@ -613,10 +660,12 @@
               </div>
               <Countdown />
             </section>
+            
             <BotanicalDivider />
             <PhotoGallery />
             <QuotesTicker />
             <BotanicalDivider />
+            
             {/* LOCATION */}
             <section className="py-24 px-6 text-center max-w-3xl mx-auto stagger-group">
               <p className="font-serif italic text-2xl md:text-3xl leading-relaxed mb-8" style={{ color:"#A3B899" }}>
@@ -639,11 +688,13 @@
                 </a>
               </div>
             </section>
+            
             <BotanicalDivider />
             <Timeline />
             <BotanicalDivider />
             <RSVPForm />
             <BotanicalDivider />
+            
             {/* FOOTER */}
             <footer className="relative py-14 text-center overflow-hidden">
               <img src={FLOWERS} aria-hidden="true" className="absolute pointer-events-none select-none"
@@ -660,7 +711,9 @@
                 <a href="tel:+393475145114" className="font-serif italic text-base transition-opacity hover:opacity-80" style={{ color: "#7a9070" }}>Luca · 347 514 5114</a>
               </div>
             </footer>
+            
           </div>
+          
           <MusicPlayer playing={musicPlaying} onToggle={toggleMusic} />
         </>
       );
