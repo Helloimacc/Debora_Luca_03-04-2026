@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Debora &amp; Luca · 5 Settembre 2026</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet" />
+  <!-- Tailwind Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ["'Cormorant Garamond'", "serif"],
+            sans:  ["'Montserrat'", "sans-serif"],
+          }
+        }
+      }
+    }
+  </script>
+  <!-- React 18 -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel standalone (JSX) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- canvas-confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { background: #FDFBF7; overflow: hidden; }
+    ::placeholder { opacity: 0.3; }
+    select option { background: #FDFBF7; color: #7a9070; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useEffect, useRef, useState, useCallback } = React;
+    gsap.registerPlugin(ScrollTrigger);
+    /* ── Sostituisci con il data:image/png;base64,... completo dal file scaricato ── */
+    const FLOWERS = "data:image/png;base64,iVBORw0KGgo...";
+    const MUSIC_URL = "https://res.cloudinary.com/dvjgznbzm/video/upload/v1774795778/paulyudin-romantic-piano-164822_ytzzn3.mp3";
+    const VIDEO_URL = "https://res.cloudinary.com/dvjgznbzm/video/upload/v1774820579/busta_verde_pastello_con_data_debossing_lzadff.mov";
+    const PHOTOS = [
+      "https://res.cloudinary.com/dvjgznbzm/image/upload/f_auto,q_auto,w_1400/v1774796845/IMG_4307_withcw.heic",
+      "https://res.cloudinary.com/dvjgznbzm/image/upload/f_auto,q_auto,w_1400/v1774796848/IMG_8780_y48grg.jpg",
+      "https://res.cloudinary.com/dvjgznbzm/image/upload/f_auto,q_auto,w_1400/v1774796848/IMG_2553_vcrcg0.heic",
+      "https://res.cloudinary.com/dvjgznbzm/image/upload/f_auto,q_auto,w_1400/v1774796847/IMG_2688_daidh8.heic",
+      "https://res.cloudinary.com/dvjgznbzm/image/upload/f_auto,q_auto,w_1400/v1774796846/IMG_3396_rebrbg.heic",
+    ];
+    /* ─────────────────── BotanicalDivider ─────────────────── */
+    function BotanicalDivider({ className = "" }) {
+      return (
+        <div className={`flex items-center justify-center py-2 ${className}`}>
+          <svg width="320" height="32" viewBox="0 0 320 32" fill="none" style={{ opacity: 0.55 }}>
+            <line x1="0" y1="16" x2="112" y2="16" stroke="#A3B899" strokeWidth="0.75" />
+            <path d="M112 16 Q118 10 124 8" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
+            <path d="M116 16 Q120 11 125 12" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
+            <path d="M120 16 Q122 20 126 22" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
+            <line x1="124" y1="6" x2="132" y2="16" stroke="#A3B899" strokeWidth="0.75" strokeLinecap="round" />
+            <path d="M128 12 Q130 8 133 7" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
+            <rect x="154" y="10" width="12" height="12" transform="rotate(45 160 16)" stroke="#A3B899" strokeWidth="0.9" fill="#FDFBF7" />
+            <rect x="157" y="13" width="6" height="6" transform="rotate(45 160 16)" fill="#A3B899" fillOpacity="0.4" />
+            <line x1="196" y1="16" x2="188" y2="6" stroke="#A3B899" strokeWidth="0.75" strokeLinecap="round" />
+            <path d="M192 12 Q190 8 187 7" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
+            <path d="M208 16 Q202 10 196 8" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
+            <path d="M204 16 Q200 11 195 12" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
+            <path d="M200 16 Q198 20 194 22" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
+            <line x1="208" y1="16" x2="320" y2="16" stroke="#A3B899" strokeWidth="0.75" />
+          </svg>
+        </div>
+      );
+    }
+    /* ─────────────────── Monogram ─────────────────── */
+    function Monogram() {
+      return (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden" aria-hidden="true">
+          <span className="font-serif italic font-light leading-none"
+            style={{ fontSize: "clamp(18rem,40vw,32rem)", color: "#A3B899", opacity: 0.055, letterSpacing: "-0.02em", userSelect: "none" }}>
+            D&amp;L
+          </span>
+        </div>
+      );
+    }
+    /* ─────────────────── Countdown ─────────────────── */
+    function Countdown() {
+      const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      useEffect(() => {
+        const target = new Date("September 5, 2026 11:00:00").getTime();
+        function update() {
+          const diff = target - Date.now();
+          if (diff < 0) return;
+          setTimeLeft({
+            days:    Math.floor(diff / 86400000),
+            hours:   Math.floor((diff % 86400000) / 3600000),
+            minutes: Math.floor((diff % 3600000) / 60000),
+            seconds: Math.floor((diff % 60000) / 1000),
+          });
+        }
+        update();
+        const id = setInterval(update, 1000);
+        return () => clearInterval(id);
+      }, []);
+      const units = [
+        { value: timeLeft.days,    label: "giorni" },
+        { value: timeLeft.hours,   label: "ore" },
+        { value: timeLeft.minutes, label: "minuti" },
+        { value: timeLeft.seconds, label: "secondi" },
+      ];
+      return (
+        <div className="grid grid-cols-4 gap-4 max-w-lg mx-auto font-sans uppercase tracking-widest">
+          {units.map(({ value, label }) => (
+            <div key={label} className="flex flex-col items-center">
+              <span className="text-4xl md:text-6xl font-light tabular-nums" style={{ color: "#7a9070" }}>
+                {String(value).padStart(2, "0")}
+              </span>
+              <span className="text-[9px] mt-1" style={{ color: "#F4B9A1" }}>{label}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    /* ─────────────────── MusicPlayer ─────────────────── */
+    function MusicPlayer({ playing, onToggle }) {
+      return (
+        <button onClick={onToggle} title={playing ? "Pausa" : "Riproduci"}
+          className="fixed bottom-6 right-6 z-50 flex items-center justify-center rounded-full shadow-md transition-all"
+          style={{ width: 44, height: 44, backgroundColor: "#FDFBF7", border: "1px solid #A3B899", color: "#7a9070" }}
+          onMouseEnter={e => { e.currentTarget.style.backgroundColor="#A3B899"; e.currentTarget.style.color="#FDFBF7"; }}
+          onMouseLeave={e => { e.currentTarget.style.backgroundColor="#FDFBF7"; e.currentTarget.style.color="#7a9070"; }}>
+          {playing ? (
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+              <rect x="2" y="1" width="4" height="12" rx="1"/><rect x="8" y="1" width="4" height="12" rx="1"/>
+            </svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+              <path d="M3 1.5 L12 7 L3 12.5 Z"/>
+            </svg>
+          )}
+        </button>
+      );
+    }
+    /* ─────────────────── CornerOrnaments ─────────────────── */
+    function Corner({ flip = false }) {
+      return (
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
+          style={{ transform: flip ? "scale(-1,-1)" : "none", opacity: 0.6 }}>
+          <path d="M2 34 L2 8 Q2 2 8 2 L34 2" stroke="#A3B899" strokeWidth="0.8" fill="none" strokeLinecap="round"/>
+          <path d="M2 20 Q10 12 18 10" stroke="#A3B899" strokeWidth="0.7" fill="none" strokeLinecap="round"/>
+          <path d="M8 28 Q12 20 16 18" stroke="#A3B899" strokeWidth="0.6" fill="none" strokeLinecap="round"/>
+          <circle cx="2" cy="34" r="1.5" fill="#A3B899" fillOpacity="0.5"/>
+          <circle cx="34" cy="2" r="1.5" fill="#A3B899" fillOpacity="0.5"/>
+        </svg>
+      );
+    }
+    function CornerOrnaments({ children }) {
+      return (
+        <div className="relative">
+          <div className="absolute top-4 left-4 z-10"><Corner /></div>
+          <div className="absolute top-4 right-4 z-10" style={{ transform: "scaleX(-1)" }}><Corner /></div>
+          <div className="absolute bottom-4 left-4 z-10" style={{ transform: "scaleY(-1)" }}><Corner /></div>
+          <div className="absolute bottom-4 right-4 z-10"><Corner flip /></div>
+          {children}
+        </div>
+      );
+    }
+    /* ─────────────────── PhotoGallery ─────────────────── */
+    function getCardStyle(offset) {
+      const abs = Math.abs(offset);
+      if (abs > 1) return { opacity: 0, pointerEvents: "none", zIndex: 0, transform: "translateX(0) scale(0.6)", filter: "blur(12px)" };
+      if (offset === 0) return { transform: "translateX(0) scale(1)", filter: "blur(0px)", opacity: 1, zIndex: 10, boxShadow: "0 24px 60px rgba(0,0,0,0.28)", cursor: "default" };
+      const sign = offset > 0 ? 1 : -1;
+      return { transform: `translateX(${sign * 68}%) scale(0.78)`, filter: "blur(5px)", opacity: 0.55, zIndex: 5, cursor: "pointer" };
+    }
+    function PhotoGallery() {
+      const [current, setCurrent] = useState(0);
+      const [animating, setAnimating] = useState(false);
+      const pausedRef = useRef(false);
+      const timerRef  = useRef(null);
+      const goTo = useCallback((index, fromUser = false) => {
+        if (animating) return;
+        setAnimating(true);
+        if (fromUser) { pausedRef.current = true; setTimeout(() => { pausedRef.current = false; }, 7000); }
+        setCurrent((index + PHOTOS.length) % PHOTOS.length);
+        setTimeout(() => setAnimating(false), 600);
+      }, [animating]);
+      useEffect(() => {
+        const tick = () => { if (!pausedRef.current) goTo(current + 1); timerRef.current = setTimeout(tick, 4800); };
+        timerRef.current = setTimeout(tick, 4800);
+        return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+      }, [current, goTo]);
+      return (
+        <section className="w-full py-16" style={{ backgroundColor: "#f5f0e8" }}>
+          <div className="text-center mb-10">
+            <p className="font-serif italic text-sm tracking-[0.4em] uppercase" style={{ color: "#F4B9A1" }}>✦ &nbsp; I nostri momenti &nbsp; ✦</p>
+          </div>
+          <div className="relative mx-auto overflow-hidden" style={{ height: "clamp(260px,50vw,520px)", maxWidth: "900px" }}>
+            {PHOTOS.map((src, i) => {
+              const offset = ((i - current + PHOTOS.length) % PHOTOS.length);
+              const norm = offset > PHOTOS.length / 2 ? offset - PHOTOS.length : offset;
+              const s = getCardStyle(norm);
+              return (
+                <div key={src} onClick={() => norm !== 0 && goTo(i, true)}
+                  className="absolute top-0 left-1/2"
+                  style={{ width: "clamp(220px,55vw,560px)", height: "100%", marginLeft: "calc(clamp(220px,55vw,560px) / -2)",
+                    transition: "transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.6s ease, filter 0.6s ease", ...s }}>
+                  <img src={src} alt="" className="w-full h-full rounded-sm"
+                    style={{ objectFit: "cover", display: "block", filter: "contrast(1.14) saturate(0.72) brightness(0.88) sepia(0.18)" }} draggable={false} />
+                  <div className="absolute inset-0 rounded-sm pointer-events-none"
+                    style={{ background: "linear-gradient(160deg,rgba(122,144,112,0.14) 0%,transparent 45%,rgba(193,120,80,0.13) 100%)", mixBlendMode: "multiply" }} />
+                  <div className="absolute inset-0 rounded-sm pointer-events-none"
+                    style={{ background: "radial-gradient(ellipse at center,transparent 55%,rgba(10,8,5,0.55) 100%)" }} />
+                  {norm === 0 && <div className="absolute inset-0 rounded-sm pointer-events-none" style={{ border: "1px solid rgba(163,184,153,0.35)" }} />}
+                </div>
+              );
+            })}
+          </div>
+          <div className="flex items-center justify-center gap-8 mt-8">
+            <button onClick={() => goTo(current - 1, true)} className="flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity" style={{ width: 36, height: 36 }}>
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M12 3 L6 9 L12 15" stroke="#7a9070" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+            <div className="flex items-center gap-2">
+              {PHOTOS.map((_, i) => (
+                <button key={i} onClick={() => goTo(i, true)} className="rounded-full transition-all duration-500"
+                  style={{ width: i === current ? "22px" : "7px", height: "7px", backgroundColor: i === current ? "#F4B9A1" : "#A3B899", opacity: i === current ? 1 : 0.45 }} />
+              ))}
+            </div>
+            <button onClick={() => goTo(current + 1, true)} className="flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity" style={{ width: 36, height: 36 }}>
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M6 3 L12 9 L6 15" stroke="#7a9070" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          </div>
+        </section>
+      );
+    }
+    /* ─────────────────── QuotesTicker ─────────────────── */
+    const QUOTES = [
+      { text: "E ho guardato dentro un'emozione, e ci ho visto dentro tanto amore...", author: "Vasco Rossi" },
+      { text: "Se l'universo intero ci ha fatto incontrare, qualcosa di sicuro vorrà dire.", author: "Ligabue" },
+    ];
+    const FULL_ITEMS = [...QUOTES, ...QUOTES, ...QUOTES, ...QUOTES];
+    function QuotesTicker() {
+      const trackRef = useRef(null);
+      const tweenRef = useRef(null);
+      useEffect(() => {
+        const track = trackRef.current;
+        if (!track) return;
+        const totalW = track.scrollWidth / 2;
+        tweenRef.current = gsap.to(track, { x: -totalW, duration: 60, ease: "none", repeat: -1,
+          modifiers: { x: gsap.utils.unitize(v => parseFloat(v) % totalW) } });
+        return () => { tweenRef.current && tweenRef.current.kill(); };
+      }, []);
+      return (
+        <div className="w-full overflow-hidden py-10"
+          style={{ borderTop: "1px solid rgba(163,184,153,0.18)", borderBottom: "1px solid rgba(163,184,153,0.18)" }}
+          onMouseEnter={() => tweenRef.current && tweenRef.current.timeScale(0.25)}
+          onMouseLeave={() => tweenRef.current && tweenRef.current.timeScale(1)}>
+          <div ref={trackRef} className="flex items-center gap-0 whitespace-nowrap will-change-transform">
+            {FULL_ITEMS.map((q, i) => (
+              <div key={i} className="inline-flex items-center gap-8 px-14" style={{ flexShrink: 0 }}>
+                <span className="font-serif italic" style={{ color: "#7a9070", fontSize: "clamp(1rem,2.2vw,1.25rem)", letterSpacing: "0.01em" }}>
+                  &ldquo;{q.text}&rdquo;
+                </span>
+                <span className="font-sans uppercase" style={{ color: "#F4B9A1", fontSize: "0.62rem", letterSpacing: "0.35em", flexShrink: 0 }}>
+                  — {q.author}
+                </span>
+                <span style={{ color: "#A3B899", opacity: 0.3, fontSize: "0.5rem" }}>✦</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    /* ─────────────────── Timeline ─────────────────── */
+    const EVENTS = [
+      { time: "11:30", moment: "Accoglienza",            detail: "Arrivo degli ospiti" },
+      { time: "11:45", moment: "Cerimonia Civile",       detail: "" },
+      { time: "12:45", moment: "Aperitivo di Benvenuto", detail: "Buffet" },
+      { time: "13:45", moment: "Il Ricevimento",         detail: "" },
+      { time: "17:00", moment: "Taglio della Torta",     detail: "" },
+      { time: "18:00", moment: "Party & Live Band",      detail: "" },
+    ];
+    function launchConfetti() {
+      const colors = ["#A3B899","#F4B9A1","#c8dbc3","#f7cebb","#7a9070"];
+      const burst = (angle, x) => confetti({ particleCount:18, angle, spread:55, origin:{x, y:0.7}, colors, shapes:["circle","square"], scalar:0.9, drift:0.4, gravity:0.9, ticks:200 });
+      burst(60,0.2); setTimeout(()=>burst(120,0.8),150); setTimeout(()=>burst(80,0.4),320); setTimeout(()=>burst(100,0.6),480);
+    }
+    function Timeline() {
+      const partyRef = useRef(null);
+      const firedRef = useRef(false);
+      useEffect(() => {
+        const el = partyRef.current;
+        if (!el) return;
+        const obs = new IntersectionObserver(([entry]) => {
+          if (entry.isIntersecting && !firedRef.current) { firedRef.current = true; launchConfetti(); }
+        }, { threshold: 0.8 });
+        obs.observe(el);
+        return () => obs.disconnect();
+      }, []);
+      return (
+        <section className="py-28 px-6 max-w-2xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="font-serif italic text-base tracking-[0.4em] uppercase mb-3" style={{ color: "#F4B9A1" }}>✦ &nbsp; La Giornata &nbsp; ✦</p>
+            <h2 className="font-serif text-4xl md:text-5xl font-light" style={{ color: "#7a9070" }}>Programma</h2>
+          </div>
+          <div className="relative">
+            <div className="absolute left-1/2 top-0 bottom-0 w-px" style={{ backgroundColor: "#A3B899", opacity: 0.25, transform: "translateX(-50%)" }} />
+            <div className="space-y-0">
+              {EVENTS.map((ev, i) => {
+                const isLeft  = i % 2 === 0;
+                const isParty = ev.moment === "Party & Live Band";
+                return (
+                  <div key={i} ref={isParty ? partyRef : undefined} className="relative flex items-center" style={{ minHeight: "5.5rem" }}>
+                    <div className={`w-1/2 pr-8 text-right ${isLeft ? "block" : "invisible"}`}>
+                      {isLeft && <>
+                        <span className="font-sans text-sm uppercase tracking-[0.25em] block mb-1" style={{ color: "#F4B9A1" }}>{ev.time}</span>
+                        <p className="font-serif font-light leading-tight" style={{ color: "#7a9070", fontSize: isParty?"1.2rem":"1.1rem", fontStyle: isParty?"italic":"normal" }}>
+                          {isParty ? "🎶 " : ""}{ev.moment}
+                        </p>
+                        {ev.detail && <p className="font-serif italic text-sm mt-0.5" style={{ color: "#A3B899", opacity: 0.8 }}>{ev.detail}</p>}
+                      </>}
+                    </div>
+                    <div className="absolute left-1/2 -translate-x-1/2 z-10">
+                      <div className="rounded-full border-2" style={{ width: isParty?"14px":"10px", height: isParty?"14px":"10px", borderColor: isParty?"#F4B9A1":"#A3B899", backgroundColor: isParty?"#F4B9A1":"#FDFBF7" }} />
+                    </div>
+                    <div className={`w-1/2 pl-8 ${!isLeft ? "block" : "invisible"}`}>
+                      {!isLeft && <>
+                        <span className="font-sans text-sm uppercase tracking-[0.25em] block mb-1" style={{ color: "#F4B9A1" }}>{ev.time}</span>
+                        <p className="font-serif font-light leading-tight" style={{ color: "#7a9070", fontSize: isParty?"1.2rem":"1.1rem", fontStyle: isParty?"italic":"normal" }}>
+                          {isParty ? "🎶 " : ""}{ev.moment}
+                        </p>
+                        {ev.detail && <p className="font-serif italic text-sm mt-0.5" style={{ color: "#A3B899", opacity: 0.8 }}>{ev.detail}</p>}
+                      </>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      );
+    }
+    /* ─────────────────── RSVPForm ─────────────────── */
+    function RSVPForm() {
+      const [name, setName]           = useState("");
+      const [attending, setAttending] = useState("");
+      const [guests, setGuests]       = useState("1");
+      const [song, setSong]           = useState("");
+      const [notes, setNotes]         = useState("");
+      const [submitted, setSubmitted] = useState(false);
+      const inputStyle = { borderBottom: "1px solid #A3B899", color: "#7a9070" };
+      return (
+        <section className="py-20 px-6 max-w-xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="font-serif italic text-base tracking-[0.4em] uppercase mb-3" style={{ color: "#F4B9A1" }}>✦ &nbsp; Conferma la tua presenza &nbsp; ✦</p>
+            <p className="font-serif italic text-xl" style={{ color: "#A3B899" }}>entro il 31 Luglio 2026</p>
+          </div>
+          <CornerOrnaments>
+            <div className="px-10 py-10">
+              {submitted ? (
+                <div className="text-center py-12">
+                  <p className="font-serif italic text-2xl mb-3" style={{ color: "#A3B899" }}>Grazie per la tua risposta!</p>
+                  <p className="font-sans text-sm uppercase tracking-widest" style={{ color: "#F4B9A1" }}>Non vediamo l'ora di festeggiare con te.</p>
+                </div>
+              ) : (
+                <form onSubmit={e => { e.preventDefault(); setSubmitted(true); }} className="space-y-8">
+                  <div>
+                    <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-2" style={{ color: "#A3B899" }}>Nome e Cognome</label>
+                    <input type="text" required value={name} onChange={e => setName(e.target.value)}
+                      className="w-full bg-transparent py-2 font-serif text-lg focus:outline-none"
+                      style={inputStyle} placeholder="Il tuo nome" />
+                  </div>
+                  <div>
+                    <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-3" style={{ color: "#A3B899" }}>Parteciperai?</label>
+                    <div className="flex gap-8">
+                      {["si","no"].map(val => (
+                        <button key={val} type="button" onClick={() => setAttending(val)} className="flex items-center gap-2 cursor-pointer">
+                          <div className="w-4 h-4 rounded-full border flex items-center justify-center transition-all"
+                            style={{ borderColor: attending===val?"#A3B899":"#c9c0b4", backgroundColor: attending===val?"#A3B899":"transparent" }}>
+                            {attending===val && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                          </div>
+                          <span className="font-sans text-xs uppercase tracking-[0.2em]" style={{ color: attending===val?"#7a9070":"#b0a898" }}>
+                            {val==="si" ? "Sì, ci sarò!" : "No, mi dispiace"}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {attending==="si" && (
+                    <div>
+                      <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-2" style={{ color: "#A3B899" }}>Numero di persone (incluso te)</label>
+                      <select value={guests} onChange={e => setGuests(e.target.value)}
+                        className="w-full bg-transparent py-2 font-serif text-lg focus:outline-none cursor-pointer" style={inputStyle}>
+                        {[1,2,3,4].map(n => <option key={n} value={String(n)}>{n}</option>)}
+                      </select>
+                    </div>
+                  )}
+                  <div>
+                    <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-2" style={{ color: "#A3B899" }}>🎵 &nbsp; La tua canzone del cuore</label>
+                    <input type="text" value={song} onChange={e => setSong(e.target.value)}
+                      className="w-full bg-transparent py-2 font-serif text-lg focus:outline-none"
+                      style={inputStyle} placeholder="Titolo – Artista" />
+                    <p className="font-serif italic text-sm mt-1" style={{ color: "#A3B899", opacity: 0.6 }}>La includeremo nella playlist della serata!</p>
+                  </div>
+                  <div>
+                    <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-2" style={{ color: "#A3B899" }}>Note o intolleranze alimentari</label>
+                    <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3}
+                      className="w-full bg-transparent py-2 font-serif text-base focus:outline-none resize-none"
+                      style={inputStyle} placeholder="Eventuali note..." />
+                  </div>
+                  <button type="submit"
+                    className="w-full py-4 text-center font-sans text-xs uppercase tracking-[0.4em] transition-colors"
+                    style={{ backgroundColor: "#A3B899", color: "#FDFBF7" }}
+                    onMouseEnter={e => { e.currentTarget.style.backgroundColor="#7a9070"; }}
+                    onMouseLeave={e => { e.currentTarget.style.backgroundColor="#A3B899"; }}>
+                    Conferma Presenza
+                  </button>
+                </form>
+              )}
+            </div>
+          </CornerOrnaments>
+        </section>
+      );
+    }
+    /* ─────────────────── App ─────────────────── */
+    function App() {
+      const videoRef        = useRef(null);
+      const clickAreaRef    = useRef(null);
+      const tapHintRef      = useRef(null);
+      const textSaveRef     = useRef(null);
+      const textSposiamoRef = useRef(null);
+      const preloaderRef    = useRef(null);
+      const mainContentRef  = useRef(null);
+      const heroTextRef     = useRef(null);
+      const bgAudioRef      = useRef(null);
+      const sequenceStarted = useRef(false);
+      const [preloaderHidden, setPreloaderHidden] = useState(false);
+      const [musicPlaying, setMusicPlaying]       = useState(false);
+      useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return;
+        const onTime = () => {
+          if (video.currentTime >= 2 && !sequenceStarted.current) {
+            sequenceStarted.current = true;
+            runCinematicSequence();
+          }
+        };
+        video.addEventListener("timeupdate", onTime);
+        return () => video.removeEventListener("timeupdate", onTime);
+      }, []);
+      useEffect(() => {
+        if (!preloaderHidden) return;
+        document.querySelectorAll(".stagger-group").forEach(group => {
+          gsap.fromTo(Array.from(group.children), { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 1, stagger: 0.18, ease: "power3.out",
+            scrollTrigger: { trigger: group, start: "top 82%" } });
+        });
+        document.querySelectorAll(".reveal").forEach(el =>
+          gsap.fromTo(el, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%" } }));
+        document.querySelectorAll(".revelation").forEach(el =>
+          gsap.fromTo(el, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 80%" } }));
+        document.querySelectorAll(".scale-reveal").forEach(el =>
+          gsap.fromTo(el, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 1.4, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 88%" } }));
+        ScrollTrigger.refresh();
+      }, [preloaderHidden]);
+      function runCinematicSequence() {
+        const tl = gsap.timeline();
+        tl
+          .to([videoRef.current, clickAreaRef.current], { opacity: 0, duration: 1, ease: "power2.inOut" })
+          .set(textSaveRef.current, { display: "flex" })
+          .to(textSaveRef.current, { opacity: 1, duration: 1.2 })
+          .to(textSaveRef.current, { opacity: 0, duration: 0.8, delay: 1.5 })
+          .set(textSaveRef.current, { display: "none" })
+          .set(textSposiamoRef.current, { display: "flex" })
+          .to(textSposiamoRef.current, { opacity: 1, duration: 1.2 })
+          .to(textSposiamoRef.current, { opacity: 0, duration: 1, delay: 4 })
+          .set(textSposiamoRef.current, { display: "none" })
+          .to(preloaderRef.current, { opacity: 0, duration: 1.5, onComplete: () => {
+            if (preloaderRef.current) preloaderRef.current.style.display = "none";
+            document.body.style.overflow = "auto";
+            setPreloaderHidden(true);
+          }})
+          .to(mainContentRef.current, { opacity: 1, duration: 1 }, "-=1")
+          .to(heroTextRef.current, { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" }, "-=0.5");
+      }
+      function startMusic() {
+        const a = bgAudioRef.current;
+        if (!a) return;
+        a.volume = 0.25; a.loop = true;
+        a.play().then(() => setMusicPlaying(true)).catch(() => {});
+      }
+      function toggleMusic() {
+        const a = bgAudioRef.current;
+        if (!a) return;
+        if (musicPlaying) { a.pause(); setMusicPlaying(false); }
+        else { a.play().then(() => setMusicPlaying(true)).catch(() => {}); }
+      }
+      function handleClick() {
+        if (tapHintRef.current) gsap.to(tapHintRef.current, { opacity: 0, duration: 0.3 });
+        videoRef.current && videoRef.current.play().catch(() => {});
+        startMusic();
+      }
+      return (
+        <>
+          <audio ref={bgAudioRef} src={MUSIC_URL} preload="auto" />
+          {/* ════ PRELOADER ════ */}
+          <div ref={preloaderRef} className="fixed inset-0 z-[200] flex items-center justify-center overflow-hidden"
+            style={{ backgroundColor: "#FDFBF7" }}>
+            <div ref={clickAreaRef} onClick={handleClick}
+              className="absolute inset-0 z-[210] cursor-pointer flex items-center justify-center">
+              <p ref={tapHintRef} className="font-serif italic opacity-40 text-sm" style={{ color: "#A3B899" }}>
+                Tocca per aprire l'invito
+              </p>
+            </div>
+            <video ref={videoRef} muted playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover">
+              <source src={VIDEO_URL} />
+            </video>
+            {/* Save The Date */}
+            <div ref={textSaveRef} className="absolute inset-0 flex-col items-center justify-center z-[300]"
+              style={{ display:"none", opacity:0, pointerEvents:"none", backgroundColor:"#FDFBF7" }}>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-px w-16" style={{ backgroundColor:"#A3B899", opacity:0.5 }} />
+                <span style={{ color:"#A3B899", opacity:0.6, fontSize:"0.6rem" }}>✦</span>
+                <div className="h-px w-16" style={{ backgroundColor:"#A3B899", opacity:0.5 }} />
+              </div>
+              <h2 className="font-sans text-2xl md:text-4xl uppercase tracking-[0.5em] font-light" style={{ color:"#A3B899" }}>Save The Date</h2>
+            </div>
+            {/* Ci Sposiamo */}
+            <div ref={textSposiamoRef} className="absolute inset-0 flex-col items-center justify-center z-[300] px-8 overflow-hidden"
+              style={{ display:"none", opacity:0, pointerEvents:"none", backgroundColor:"#FDFBF7" }}>
+              <img src={FLOWERS} aria-hidden="true" className="absolute pointer-events-none select-none"
+                style={{ top:"-8%", right:"-8%", width:"clamp(220px,38vw,420px)", opacity:0.9 }} />
+              <img src={FLOWERS} aria-hidden="true" className="absolute pointer-events-none select-none"
+                style={{ bottom:"-8%", left:"-8%", width:"clamp(180px,32vw,360px)", opacity:0.8, transform:"rotate(180deg)" }} />
+              <div className="flex items-center gap-4 mb-8">
+                <div className="h-px w-12 md:w-20" style={{ backgroundColor:"#A3B899", opacity:0.5 }} />
+                <span className="text-xs" style={{ color:"#A3B899", opacity:0.7 }}>✦</span>
+                <div className="h-px w-12 md:w-20" style={{ backgroundColor:"#A3B899", opacity:0.5 }} />
+              </div>
+              <p className="font-serif italic text-sm tracking-[0.5em] uppercase mb-5" style={{ color:"#A3B899" }}>Debora &amp; Luca</p>
+              <h1 className="font-serif italic font-light text-center leading-tight relative z-10"
+                style={{ color:"#7a9070", fontSize:"clamp(3rem,10vw,7rem)", letterSpacing:"0.04em" }}>Ci Sposiamo</h1>
+              <p className="font-serif italic text-xl md:text-2xl mt-4" style={{ color:"#F4B9A1" }}>5 Settembre 2026</p>
+              <div className="flex items-center gap-4 mt-8">
+                <div className="h-px w-12 md:w-20" style={{ backgroundColor:"#A3B899", opacity:0.5 }} />
+                <span className="text-xs" style={{ color:"#A3B899", opacity:0.7 }}>✦</span>
+                <div className="h-px w-12 md:w-20" style={{ backgroundColor:"#A3B899", opacity:0.5 }} />
+              </div>
+            </div>
+          </div>
+          {/* ════ MAIN CONTENT ════ */}
+          <div ref={mainContentRef} className="opacity-0 overflow-x-hidden" style={{ backgroundColor:"#FDFBF7" }}>
+            {/* HERO */}
+            <section className="relative h-screen w-full flex items-center justify-center overflow-hidden" style={{ backgroundColor:"#FDFBF7" }}>
+              <Monogram />
+              <img src={FLOWERS} aria-hidden="true" className="absolute pointer-events-none select-none"
+                style={{ top:"-8%", right:"-8%", width:"clamp(280px,42vw,560px)", opacity:0.92, zIndex:1 }} />
+              <img src={FLOWERS} aria-hidden="true" className="absolute pointer-events-none select-none"
+                style={{ bottom:"-8%", left:"-8%", width:"clamp(220px,36vw,480px)", opacity:0.85, zIndex:1, transform:"rotate(180deg)" }} />
+              <div className="absolute left-1/2 top-0 w-px h-24" style={{ backgroundColor:"#A3B899", opacity:0.25, transform:"translateX(-50%)" }} />
+              <div className="absolute left-1/2 bottom-0 w-px h-24" style={{ backgroundColor:"#A3B899", opacity:0.25, transform:"translateX(-50%)" }} />
+              <div ref={heroTextRef} className="relative text-center px-6 opacity-0" style={{ transform:"translateY(40px)", zIndex:2 }}>
+                <p className="font-serif italic text-base tracking-[0.4em] uppercase mb-8" style={{ color:"#A3B899" }}>✦ &nbsp; Matrimonio &nbsp; ✦</p>
+                <h1 className="font-serif text-6xl md:text-8xl font-light mb-3 leading-none" style={{ color:"#7a9070" }}>Debora</h1>
+                <p className="font-serif italic text-2xl md:text-3xl mb-3" style={{ color:"#F4B9A1" }}>&amp;</p>
+                <h1 className="font-serif text-6xl md:text-8xl font-light mb-10 leading-none" style={{ color:"#7a9070" }}>Luca</h1>
+                <p className="font-serif italic text-lg md:text-xl leading-relaxed" style={{ color:"#A3B899" }}>
+                  Vi invitiamo a celebrare con noi<br/>il giorno del nostro matrimonio.
+                </p>
+              </div>
+              <div className="absolute bottom-10 left-1/2 flex flex-col items-center gap-2"
+                style={{ transform:"translateX(-50%)", zIndex:3, animation:"heroScrollFloat 2.8s ease-in-out infinite" }}>
+                <div style={{ width:"1px", height:"32px", background:"linear-gradient(to bottom,transparent,rgba(163,184,153,0.45))" }} />
+                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" style={{ opacity:0.45 }}>
+                  <path d="M1 1.5 L6 6.5 L11 1.5" stroke="#A3B899" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <style>{`
+                @keyframes heroScrollFloat {
+                  0%,100%{ transform:translateX(-50%) translateY(0);   opacity:0.7; }
+                  50%     { transform:translateX(-50%) translateY(7px); opacity:1;   }
+                }
+              `}</style>
+            </section>
+            <BotanicalDivider />
+            {/* COUNTDOWN */}
+            <section className="py-28 px-6 text-center reveal" style={{ backgroundColor:"#FDFBF7" }}>
+              <div className="stagger-group">
+                <span className="font-serif text-2xl italic block mb-2" style={{ color:"#A3B899" }}>Sabato</span>
+                <h2 className="font-sans text-4xl md:text-6xl font-light uppercase tracking-widest mb-16" style={{ color:"#7a9070" }}>5 Settembre 2026</h2>
+              </div>
+              <Countdown />
+            </section>
+            <BotanicalDivider />
+            <PhotoGallery />
+            <QuotesTicker />
+            <BotanicalDivider />
+            {/* LOCATION */}
+            <section className="py-24 px-6 text-center max-w-3xl mx-auto stagger-group">
+              <p className="font-serif italic text-2xl md:text-3xl leading-relaxed mb-8" style={{ color:"#A3B899" }}>
+                Non vediamo l'ora di condividere questo momento indimenticabile con le nostre persone più speciali.
+              </p>
+              <p className="font-serif text-base md:text-lg mb-10" style={{ color:"#A3B899", opacity:0.8 }}>
+                La cerimonia e il ricevimento si terranno presso il
+              </p>
+              <div className="inline-block w-full max-w-md mx-auto text-center px-8 py-8" style={{ border:"1px solid #A3B899" }}>
+                <p className="font-serif italic text-base tracking-[0.4em] uppercase mb-2" style={{ color:"#F4B9A1" }}>✦ &nbsp; Location &nbsp; ✦</p>
+                <h3 className="font-serif text-2xl md:text-3xl font-light mb-1" style={{ color:"#7a9070" }}>Ristorante Golden Gate</h3>
+                <p className="font-sans text-xs uppercase tracking-[0.3em] mb-6" style={{ color:"#A3B899", opacity:0.7 }}>Loc. La Fumosa, Bortigiadas — OT</p>
+                <a href="https://www.google.com/maps?sca_esv=d22b1170cb5b1f6e&daddr=Strada+Statale+127+Settentrionale+Sarda,+07030+Bortigiadas+OT"
+                  target="_blank" rel="noopener noreferrer"
+                  className="inline-block font-sans text-xs uppercase tracking-[0.35em] px-8 py-3 transition-all"
+                  style={{ color:"#FDFBF7", backgroundColor:"#A3B899" }}
+                  onMouseEnter={e => { e.currentTarget.style.backgroundColor="#7a9070"; }}
+                  onMouseLeave={e => { e.currentTarget.style.backgroundColor="#A3B899"; }}>
+                  Apri su Maps
+                </a>
+              </div>
+            </section>
+            <BotanicalDivider />
+            <Timeline />
+            <BotanicalDivider />
+            <RSVPForm />
+            <BotanicalDivider />
+            {/* FOOTER */}
+            <footer className="relative py-14 text-center overflow-hidden">
+              <img src={FLOWERS} aria-hidden="true" className="absolute pointer-events-none select-none"
+                style={{ bottom:"-20%", right:"-6%", width:"clamp(180px,32vw,360px)", opacity: 0.25 }} />
+              <p className="font-serif italic text-sm mb-8" style={{ color: "#A3B899", opacity: 0.65 }}>Debora &amp; Luca · 5 Settembre 2026</p>
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <div className="h-px w-8" style={{ backgroundColor: "#A3B899", opacity: 0.3 }} />
+                <p className="font-sans text-xs uppercase tracking-[0.3em]" style={{ color: "#A3B899", opacity: 0.6 }}>Per informazioni</p>
+                <div className="h-px w-8" style={{ backgroundColor: "#A3B899", opacity: 0.3 }} />
+              </div>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-4">
+                <a href="tel:+393455142963" className="font-serif italic text-base transition-opacity hover:opacity-80" style={{ color: "#7a9070" }}>Debora · 345 514 2963</a>
+                <span className="hidden sm:block font-serif" style={{ color: "#F4B9A1", fontSize: "0.6rem" }}>✦</span>
+                <a href="tel:+393475145114" className="font-serif italic text-base transition-opacity hover:opacity-80" style={{ color: "#7a9070" }}>Luca · 347 514 5114</a>
+              </div>
+            </footer>
+          </div>
+          <MusicPlayer playing={musicPlaying} onToggle={toggleMusic} />
+        </>
+      );
+    }
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
