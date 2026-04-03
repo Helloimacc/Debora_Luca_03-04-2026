@@ -7,7 +7,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <!-- Tailwind Play CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -36,7 +36,7 @@
     *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     body { background: #FDFBF7; overflow: hidden; }
-    ::placeholder { opacity: 0.3; }
+    ::placeholder { opacity: 0.5; color: #A3B899; }
     select option { background: #FDFBF7; color: #7a9070; }
   </style>
 </head>
@@ -52,6 +52,9 @@
     
     const MUSIC_URL = "https://res.cloudinary.com/dvjgznbzm/video/upload/v1774795778/paulyudin-romantic-piano-164822_ytzzn3.mp3";
     const VIDEO_URL = "https://res.cloudinary.com/dvjgznbzm/video/upload/f_auto,q_auto/v1774820579/busta_verde_pastello_con_data_debossing_lzadff.mp4";
+    /* Aggiunto so_0 per prendere il primissimo frame del video senza busta mezza aperta */
+    const VIDEO_POSTER = "https://res.cloudinary.com/dvjgznbzm/video/upload/so_0,f_auto,q_auto/v1774820579/busta_verde_pastello_con_data_debossing_lzadff.jpg";
+    const WATERMARK_VIDEO_URL = "https://res.cloudinary.com/dvjgznbzm/video/upload/v1774977119/Black_and_White_Wedding_invitation_instagram_story_jhjkpe.mp4";
     const PHOTOS = [
       "https://res.cloudinary.com/dvjgznbzm/image/upload/f_auto,q_auto,w_1400/v1774796845/IMG_4307_withcw.jpg",
       "https://res.cloudinary.com/dvjgznbzm/image/upload/f_auto,q_auto,w_1400/v1774796848/IMG_8780_y48grg.jpg",
@@ -64,15 +67,15 @@
     function BotanicalDivider({ className = "" }) {
       return (
         <div className={`flex items-center justify-center py-2 ${className}`}>
-          <svg width="320" height="32" viewBox="0 0 320 32" fill="none" style={{ opacity: 0.55 }}>
+          <svg width="320" height="32" viewBox="0 0 320 32" fill="none" style={{ opacity: 0.75 }}>
             <line x1="0" y1="16" x2="112" y2="16" stroke="#A3B899" strokeWidth="0.75" />
             <path d="M112 16 Q118 10 124 8" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
             <path d="M116 16 Q120 11 125 12" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
             <path d="M120 16 Q122 20 126 22" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
             <line x1="124" y1="6" x2="132" y2="16" stroke="#A3B899" strokeWidth="0.75" strokeLinecap="round" />
             <path d="M128 12 Q130 8 133 7" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
-            <rect x="154" y="10" width="12" height="12" transform="rotate(45 160 16)" stroke="#A3B899" strokeWidth="0.9" fill="#FDFBF7" />
-            <rect x="157" y="13" width="6" height="6" transform="rotate(45 160 16)" fill="#A3B899" fillOpacity="0.4" />
+            <rect x="154" y="10" width="12" height="12" transform="rotate(45 160 16)" stroke="#A3B899" strokeWidth="1" fill="#FDFBF7" />
+            <rect x="157" y="13" width="6" height="6" transform="rotate(45 160 16)" fill="#A3B899" fillOpacity="0.6" />
             <line x1="196" y1="16" x2="188" y2="6" stroke="#A3B899" strokeWidth="0.75" strokeLinecap="round" />
             <path d="M192 12 Q190 8 187 7" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
             <path d="M208 16 Q202 10 196 8" stroke="#A3B899" strokeWidth="0.75" fill="none" strokeLinecap="round" />
@@ -84,12 +87,26 @@
       );
     }
     
+    /* ─────────────────── VideoWatermark ─────────────────── */
+    const VideoWatermark = forwardRef(({ videoRef }, ref) => {
+      return (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden" aria-hidden="true" style={{ zIndex: 0 }}>
+          {/* Il video parte con opacità 0 e viene mostrato da GSAP in seguito */}
+          <div ref={ref} className="relative w-[80vw] sm:w-[50vw] max-w-md" style={{ opacity: 0, willChange: "opacity" }}>
+            <video ref={videoRef} autoPlay loop muted playsInline className="w-full h-auto rounded-[1.5rem]" style={{ mixBlendMode: "multiply", filter: "contrast(1.05)" }}>
+              <source src={WATERMARK_VIDEO_URL} type="video/mp4" />
+            </video>
+          </div>
+        </div>
+      );
+    });
+
     /* ─────────────────── Monogram ─────────────────── */
     const Monogram = forwardRef((props, ref) => {
       return (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden" aria-hidden="true" style={{ zIndex: 1 }}>
-          <span ref={ref} className="font-serif italic font-light leading-none"
-            style={{ fontSize: "clamp(18rem,40vw,32rem)", color: "#A3B899", opacity: 0.8, transform: "scale(1.05)", letterSpacing: "-0.02em", userSelect: "none", willChange: "opacity, transform" }}>
+          <span ref={ref} className="font-serif italic leading-none"
+            style={{ fontSize: "clamp(12rem,30vw,24rem)", color: "#A3B899", opacity: 0.8, transform: "scale(1.15)", letterSpacing: "-0.02em", userSelect: "none", willChange: "opacity, transform" }}>
             D&amp;L
           </span>
         </div>
@@ -125,10 +142,10 @@
         <div className="grid grid-cols-4 gap-4 max-w-lg mx-auto font-sans uppercase tracking-widest">
           {units.map(({ value, label }) => (
             <div key={label} className="flex flex-col items-center">
-              <span className="text-4xl md:text-6xl font-light tabular-nums" style={{ color: "#7a9070" }}>
+              <span className="text-4xl md:text-6xl font-normal tabular-nums" style={{ color: "#7a9070" }}>
                 {String(value).padStart(2, "0")}
               </span>
-              <span className="text-[9px] mt-1" style={{ color: "#F4B9A1" }}>{label}</span>
+              <span className="text-[10px] mt-1 font-semibold" style={{ color: "#F4B9A1" }}>{label}</span>
             </div>
           ))}
         </div>
@@ -160,7 +177,7 @@
     function Corner({ flip = false }) {
       return (
         <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
-          style={{ transform: flip ? "scale(-1,-1)" : "none", opacity: 0.6 }}>
+          style={{ transform: flip ? "scale(-1,-1)" : "none", opacity: 0.8 }}>
           <path d="M2 34 L2 8 Q2 2 8 2 L34 2" stroke="#A3B899" strokeWidth="0.8" fill="none" strokeLinecap="round"/>
           <path d="M2 20 Q10 12 18 10" stroke="#A3B899" strokeWidth="0.7" fill="none" strokeLinecap="round"/>
           <path d="M8 28 Q12 20 16 18" stroke="#A3B899" strokeWidth="0.6" fill="none" strokeLinecap="round"/>
@@ -187,7 +204,7 @@
       if (abs > 1) return { opacity: 0, pointerEvents: "none", zIndex: 0, transform: "translateX(0) scale(0.6)", filter: "blur(12px)" };
       if (offset === 0) return { transform: "translateX(0) scale(1)", filter: "blur(0px)", opacity: 1, zIndex: 10, boxShadow: "0 24px 60px rgba(0,0,0,0.28)", cursor: "default" };
       const sign = offset > 0 ? 1 : -1;
-      return { transform: `translateX(${sign * 68}%) scale(0.78)`, filter: "blur(5px)", opacity: 0.55, zIndex: 5, cursor: "pointer" };
+      return { transform: `translateX(${sign * 68}%) scale(0.78)`, filter: "blur(5px)", opacity: 0.65, zIndex: 5, cursor: "pointer" };
     }
     function PhotoGallery() {
       const [current, setCurrent] = useState(0);
@@ -233,16 +250,16 @@
             })}
           </div>
           <div className="flex items-center justify-center gap-8 mt-8">
-            <button onClick={() => goTo(current - 1, true)} className="flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity" style={{ width: 36, height: 36 }}>
+            <button onClick={() => goTo(current - 1, true)} className="flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity" style={{ width: 36, height: 36 }}>
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M12 3 L6 9 L12 15" stroke="#7a9070" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
             <div className="flex items-center gap-2">
               {PHOTOS.map((_, i) => (
                 <button key={i} onClick={() => goTo(i, true)} className="rounded-full transition-all duration-500"
-                  style={{ width: i === current ? "22px" : "7px", height: "7px", backgroundColor: i === current ? "#F4B9A1" : "#A3B899", opacity: i === current ? 1 : 0.45 }} />
+                  style={{ width: i === current ? "22px" : "7px", height: "7px", backgroundColor: i === current ? "#F4B9A1" : "#A3B899", opacity: i === current ? 1 : 0.6 }} />
               ))}
             </div>
-            <button onClick={() => goTo(current + 1, true)} className="flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity" style={{ width: 36, height: 36 }}>
+            <button onClick={() => goTo(current + 1, true)} className="flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity" style={{ width: 36, height: 36 }}>
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M6 3 L12 9 L6 15" stroke="#7a9070" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </div>
@@ -269,19 +286,19 @@
       }, []);
       return (
         <div className="w-full overflow-hidden py-10"
-          style={{ borderTop: "1px solid rgba(163,184,153,0.18)", borderBottom: "1px solid rgba(163,184,153,0.18)" }}
-          onMouseEnter={() => tweenRef.current && tweenRef.current.timeScale(0.25)}
-          onMouseLeave={() => tweenRef.current && tweenRef.current.timeScale(1)}>
-          <div ref={trackRef} className="flex items-center gap-0 whitespace-nowrap will-change-transform">
+          style={{ borderTop: "1px solid rgba(163,184,153,0.3)", borderBottom: "1px solid rgba(163,184,153,0.3)" }}>
+          <div ref={trackRef} className="flex items-center gap-0 whitespace-nowrap will-change-transform"
+            onMouseEnter={() => tweenRef.current && tweenRef.current.timeScale(0.25)}
+            onMouseLeave={() => tweenRef.current && tweenRef.current.timeScale(1)}>
             {FULL_ITEMS.map((q, i) => (
               <div key={i} className="inline-flex items-center gap-8 px-14" style={{ flexShrink: 0 }}>
                 <span className="font-serif italic" style={{ color: "#7a9070", fontSize: "clamp(1rem,2.2vw,1.25rem)", letterSpacing: "0.01em" }}>
                   &ldquo;{q.text}&rdquo;
                 </span>
-                <span className="font-sans uppercase" style={{ color: "#F4B9A1", fontSize: "0.62rem", letterSpacing: "0.35em", flexShrink: 0 }}>
+                <span className="font-sans uppercase font-medium" style={{ color: "#F4B9A1", fontSize: "0.62rem", letterSpacing: "0.35em", flexShrink: 0 }}>
                   — {q.author}
                 </span>
-                <span style={{ color: "#A3B899", opacity: 0.3, fontSize: "0.5rem" }}>✦</span>
+                <span style={{ color: "#A3B899", opacity: 0.6, fontSize: "0.5rem" }}>✦</span>
               </div>
             ))}
           </div>
@@ -322,7 +339,7 @@
             <h2 className="font-serif text-4xl md:text-5xl font-light" style={{ color: "#7a9070" }}>Programma</h2>
           </div>
           <div className="relative">
-            <div className="absolute left-1/2 top-0 bottom-0 w-px" style={{ backgroundColor: "#A3B899", opacity: 0.25, transform: "translateX(-50%)" }} />
+            <div className="absolute left-1/2 top-0 bottom-0 w-px" style={{ backgroundColor: "#A3B899", opacity: 0.4, transform: "translateX(-50%)" }} />
             <div className="space-y-0">
               {EVENTS.map((ev, i) => {
                 const isLeft  = i % 2 === 0;
@@ -331,11 +348,11 @@
                   <div key={i} ref={isParty ? partyRef : undefined} className="relative flex items-center" style={{ minHeight: "5.5rem" }}>
                     <div className={`w-1/2 pr-8 text-right ${isLeft ? "block" : "invisible"}`}>
                       {isLeft && <>
-                        <span className="font-sans text-sm uppercase tracking-[0.25em] block mb-1" style={{ color: "#F4B9A1" }}>{ev.time}</span>
-                        <p className="font-serif font-light leading-tight" style={{ color: "#7a9070", fontSize: isParty?"1.2rem":"1.1rem", fontStyle: isParty?"italic":"normal" }}>
+                        <span className="font-sans text-sm font-semibold uppercase tracking-[0.25em] block mb-1" style={{ color: "#F4B9A1" }}>{ev.time}</span>
+                        <p className="font-serif font-medium leading-tight" style={{ color: "#7a9070", fontSize: isParty?"1.2rem":"1.1rem", fontStyle: isParty?"italic":"normal" }}>
                           {isParty ? "🎶 " : ""}{ev.moment}
                         </p>
-                        {ev.detail && <p className="font-serif italic text-sm mt-0.5" style={{ color: "#A3B899", opacity: 0.8 }}>{ev.detail}</p>}
+                        {ev.detail && <p className="font-serif italic text-sm mt-0.5" style={{ color: "#7a9070", opacity: 0.8 }}>{ev.detail}</p>}
                       </>}
                     </div>
                     <div className="absolute left-1/2 -translate-x-1/2 z-10">
@@ -343,11 +360,11 @@
                     </div>
                     <div className={`w-1/2 pl-8 ${!isLeft ? "block" : "invisible"}`}>
                       {!isLeft && <>
-                        <span className="font-sans text-sm uppercase tracking-[0.25em] block mb-1" style={{ color: "#F4B9A1" }}>{ev.time}</span>
-                        <p className="font-serif font-light leading-tight" style={{ color: "#7a9070", fontSize: isParty?"1.2rem":"1.1rem", fontStyle: isParty?"italic":"normal" }}>
+                        <span className="font-sans text-sm font-semibold uppercase tracking-[0.25em] block mb-1" style={{ color: "#F4B9A1" }}>{ev.time}</span>
+                        <p className="font-serif font-medium leading-tight" style={{ color: "#7a9070", fontSize: isParty?"1.2rem":"1.1rem", fontStyle: isParty?"italic":"normal" }}>
                           {isParty ? "🎶 " : ""}{ev.moment}
                         </p>
-                        {ev.detail && <p className="font-serif italic text-sm mt-0.5" style={{ color: "#A3B899", opacity: 0.8 }}>{ev.detail}</p>}
+                        {ev.detail && <p className="font-serif italic text-sm mt-0.5" style={{ color: "#7a9070", opacity: 0.8 }}>{ev.detail}</p>}
                       </>}
                     </div>
                   </div>
@@ -367,39 +384,39 @@
       const [song, setSong]           = useState("");
       const [notes, setNotes]         = useState("");
       const [submitted, setSubmitted] = useState(false);
-      const inputStyle = { borderBottom: "1px solid #A3B899", color: "#7a9070" };
+      const inputStyle = { borderBottom: "1px solid #7a9070", color: "#4A4A4A" }; // Input resi più scuri/visibili
       return (
         <section className="py-20 px-6 max-w-xl mx-auto">
           <div className="text-center mb-14">
             <p className="font-serif italic text-base tracking-[0.4em] uppercase mb-3" style={{ color: "#F4B9A1" }}>✦ &nbsp; Conferma la tua presenza &nbsp; ✦</p>
-            <p className="font-serif italic text-xl" style={{ color: "#A3B899" }}>entro il 31 Luglio 2026</p>
+            <p className="font-serif italic text-xl" style={{ color: "#7a9070" }}>entro il 31 Luglio 2026</p>
           </div>
           <CornerOrnaments>
             <div className="px-10 py-10">
               {submitted ? (
                 <div className="text-center py-12">
-                  <p className="font-serif italic text-2xl mb-3" style={{ color: "#A3B899" }}>Grazie per la tua risposta!</p>
+                  <p className="font-serif italic text-2xl mb-3" style={{ color: "#7a9070" }}>Grazie per la tua risposta!</p>
                   <p className="font-sans text-sm uppercase tracking-widest" style={{ color: "#F4B9A1" }}>Non vediamo l'ora di festeggiare con te.</p>
                 </div>
               ) : (
                 <form onSubmit={e => { e.preventDefault(); setSubmitted(true); }} className="space-y-8">
                   <div>
-                    <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-2" style={{ color: "#A3B899" }}>Nome e Cognome</label>
+                    <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-2 font-medium" style={{ color: "#7a9070" }}>Nome e Cognome</label>
                     <input type="text" required value={name} onChange={e => setName(e.target.value)}
                       className="w-full bg-transparent py-2 font-serif text-lg focus:outline-none"
                       style={inputStyle} placeholder="Il tuo nome" />
                   </div>
                   <div>
-                    <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-3" style={{ color: "#A3B899" }}>Parteciperai?</label>
+                    <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-3 font-medium" style={{ color: "#7a9070" }}>Parteciperai?</label>
                     <div className="flex gap-8">
                       {["si","no"].map(val => (
                         <button key={val} type="button" onClick={() => setAttending(val)} className="flex items-center gap-2 cursor-pointer">
                           <div className="w-4 h-4 rounded-full border flex items-center justify-center transition-all"
-                            style={{ borderColor: attending===val?"#A3B899":"#c9c0b4", backgroundColor: attending===val?"#A3B899":"transparent" }}>
+                            style={{ borderColor: attending===val?"#7a9070":"#A3B899", backgroundColor: attending===val?"#7a9070":"transparent" }}>
                             {attending===val && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                           </div>
-                          <span className="font-sans text-xs uppercase tracking-[0.2em]" style={{ color: attending===val?"#7a9070":"#b0a898" }}>
-                            {val==="si" ? "Sì, ci sarò!" : "No, mi dispiace"}
+                          <span className="font-sans text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: attending===val?"#7a9070":"#A3B899" }}>
+                            {val==="si" ? "Sì, ci sarò!" : "No, non potrò esserci .."}
                           </span>
                         </button>
                       ))}
@@ -407,28 +424,29 @@
                   </div>
                   {attending==="si" && (
                     <div>
-                      <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-2" style={{ color: "#A3B899" }}>Numero di persone (incluso te)</label>
+                      <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-2 font-medium" style={{ color: "#7a9070" }}>Numero di persone (incluso te)</label>
                       <select value={guests} onChange={e => setGuests(e.target.value)}
-                        className="w-full bg-transparent py-2 font-serif text-lg focus:outline-none cursor-pointer" style={inputStyle}>
-                        {[1,2,3,4].map(n => <option key={n} value={String(n)}>{n}</option>)}
+                        className="w-full bg-transparent py-2 font-serif text-xl focus:outline-none cursor-pointer text-center" 
+                        style={{ ...inputStyle, textAlignLast: "center" }}>
+                        {[1,2,3,4,5,6].map(n => <option key={n} value={String(n)}>{n}</option>)}
                       </select>
                     </div>
                   )}
                   <div>
-                    <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-2" style={{ color: "#A3B899" }}>🎵 &nbsp; La tua canzone del cuore</label>
-                    <input type="text" value={song} onChange={e => setSong(e.target.value)}
-                      className="w-full bg-transparent py-2 font-serif text-lg focus:outline-none"
-                      style={inputStyle} placeholder="Titolo – Artista" />
-                    <p className="font-serif italic text-sm mt-1" style={{ color: "#A3B899", opacity: 0.6 }}>La includeremo nella playlist della serata!</p>
-                  </div>
-                  <div>
-                    <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-2" style={{ color: "#A3B899" }}>Note o intolleranze alimentari</label>
+                    <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-2 font-medium" style={{ color: "#7a9070" }}>Note o intolleranze alimentari</label>
                     <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3}
                       className="w-full bg-transparent py-2 font-serif text-base focus:outline-none resize-none"
                       style={inputStyle} placeholder="Eventuali note..." />
                   </div>
+                  <div>
+                    <label className="block font-sans text-xs uppercase tracking-[0.3em] mb-2 font-medium" style={{ color: "#7a9070" }}>🎵 &nbsp; La tua canzone del cuore</label>
+                    <input type="text" value={song} onChange={e => setSong(e.target.value)}
+                      className="w-full bg-transparent py-2 font-serif text-lg focus:outline-none"
+                      style={inputStyle} placeholder="Titolo – Artista" />
+                    <p className="font-serif italic text-sm mt-1" style={{ color: "#7a9070", opacity: 0.8 }}>La includeremo nella playlist della serata!</p>
+                  </div>
                   <button type="submit"
-                    className="w-full py-4 text-center font-sans text-xs uppercase tracking-[0.4em] transition-colors"
+                    className="w-full py-4 text-center font-sans text-xs font-bold uppercase tracking-[0.4em] transition-colors"
                     style={{ backgroundColor: "#A3B899", color: "#FDFBF7" }}
                     onMouseEnter={e => { e.currentTarget.style.backgroundColor="#7a9070"; }}
                     onMouseLeave={e => { e.currentTarget.style.backgroundColor="#A3B899"; }}>
@@ -445,12 +463,14 @@
     /* ─────────────────── App ─────────────────── */
     function App() {
       const videoRef        = useRef(null);
-      const textSaveRef     = useRef(null);
-      const textSposiamoRef = useRef(null);
+      const clickAreaRef    = useRef(null);
       const preloaderRef    = useRef(null);
       const mainContentRef  = useRef(null);
       const heroTextRef     = useRef(null);
       const monogramRef     = useRef(null);
+      const watermarkRef    = useRef(null);
+      const watermarkVideoRef = useRef(null);
+      const textCiSposiamoFullscreenRef = useRef(null);
       const bgAudioRef      = useRef(null);
       const sequenceStarted = useRef(false);
       const [preloaderHidden, setPreloaderHidden] = useState(false);
@@ -459,8 +479,6 @@
       useEffect(() => {
         const video = videoRef.current;
         if (!video) return;
-        
-        let fallbackTimer;
 
         const startSequence = () => {
           if (!sequenceStarted.current) {
@@ -477,38 +495,8 @@
 
         video.addEventListener("timeupdate", onTime);
 
-        // Tentativo di autoplay gestito con sicurezza per mobile
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-          playPromise.then(() => {
-            // Autoplay andato a buon fine, impostiamo comunque un fallback nel caso il video si blocchi in buffering
-            fallbackTimer = setTimeout(startSequence, 6000);
-          }).catch(e => {
-            console.log("Autoplay bloccato da iOS/Risparmio Energetico:", e);
-            // Autoplay bloccato (es. iOS in low power mode), forziamo l'avvio della sequenza dopo un breve ritardo
-            fallbackTimer = setTimeout(startSequence, 1000);
-          });
-        }
-
         return () => {
           video.removeEventListener("timeupdate", onTime);
-          if (fallbackTimer) clearTimeout(fallbackTimer);
-        };
-      }, []);
-
-      // Effetto per avviare la musica al primo tocco o scroll (necessario per i blocchi autoplay dei browser)
-      useEffect(() => {
-        const handleFirstInteraction = () => {
-          if (bgAudioRef.current && bgAudioRef.current.paused) {
-             startMusic();
-          }
-          ['click', 'touchstart', 'scroll'].forEach(evt => window.removeEventListener(evt, handleFirstInteraction));
-        };
-        
-        ['click', 'touchstart', 'scroll'].forEach(evt => window.addEventListener(evt, handleFirstInteraction, { once: true }));
-        
-        return () => {
-          ['click', 'touchstart', 'scroll'].forEach(evt => window.removeEventListener(evt, handleFirstInteraction));
         };
       }, []);
       
@@ -531,26 +519,26 @@
         const tl = gsap.timeline();
         tl
           .to(videoRef.current, { opacity: 0, duration: 1, ease: "power2.inOut" })
-          
-          /* Animazione esplicita per evitare accavallamenti di testo */
-          .set(textSaveRef.current, { display: "flex", opacity: 0 })
-          .to(textSaveRef.current, { opacity: 1, duration: 1.2 })
-          .to(textSaveRef.current, { opacity: 0, duration: 0.8, delay: 1.5 })
-          .set(textSaveRef.current, { display: "none" })
-          
-          .set(textSposiamoRef.current, { display: "flex", opacity: 0 })
-          .to(textSposiamoRef.current, { opacity: 1, duration: 1.2 })
-          .to(textSposiamoRef.current, { opacity: 0, duration: 1, delay: 3 })
-          .set(textSposiamoRef.current, { display: "none" })
-          
           .to(preloaderRef.current, { opacity: 0, duration: 1.5, onComplete: () => {
             if (preloaderRef.current) preloaderRef.current.style.display = "none";
             document.body.style.overflow = "auto";
             setPreloaderHidden(true);
           }})
           .to(mainContentRef.current, { opacity: 1, duration: 1 }, "-=1")
-          /* Effetto Filigrana Monogramma: attende 1.7 sec poi riduce opacità e scala */
-          .to(monogramRef.current, { opacity: 0.055, scale: 1, duration: 1.5, ease: "power2.inOut" }, "+=1.7")
+          
+          /* 1. D&L diventa filigrana e contemporaneamente appare "Ci Sposiamo!" */
+          .to(monogramRef.current, { opacity: 0.055, scale: 1, duration: 1.5, ease: "power2.inOut" }, "+=0.5")
+          .to(textCiSposiamoFullscreenRef.current, { opacity: 1, duration: 1.5, ease: "power2.inOut" }, "<")
+          
+          /* Breve pausa per leggere la scritta "Ci Sposiamo!" */
+          .to({}, { duration: 2.0 })
+          
+          /* 2. D&L e "Ci Sposiamo" si rimpiccioliscono e sfumano via, e il video entra in filigrana */
+          .to(textCiSposiamoFullscreenRef.current, { opacity: 0, scale: 0.85, duration: 1.5, ease: "power2.inOut" })
+          .to(monogramRef.current, { opacity: 0, scale: 0.85, duration: 1.5, ease: "power2.inOut" }, "<")
+          .to(watermarkRef.current, { opacity: 0.15, duration: 1.5, ease: "power2.inOut" }, "<")
+          
+          /* 3. Infine appare la schermata "Debora & Luca" e la data */
           .to(heroTextRef.current, { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" }, "-=0.5");
       }
       
@@ -567,6 +555,13 @@
         if (musicPlaying) { a.pause(); setMusicPlaying(false); }
         else { a.play().then(() => setMusicPlaying(true)).catch(() => {}); }
       }
+
+      function handleClick() {
+        if (clickAreaRef.current) clickAreaRef.current.style.pointerEvents = 'none';
+        if (videoRef.current) videoRef.current.play().catch(() => {});
+        if (watermarkVideoRef.current) watermarkVideoRef.current.play().catch(() => {});
+        startMusic();
+      }
       
       return (
         <>
@@ -575,43 +570,14 @@
           {/* ════ PRELOADER ════ */}
           <div ref={preloaderRef} className="fixed inset-0 z-[200] flex items-center justify-center overflow-hidden"
             style={{ backgroundColor: "#FDFBF7" }}>
-            <video ref={videoRef} autoPlay muted playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover">
+            
+            {/* L'area cliccabile invisibile che copre tutto e fa partire il video */}
+            <div ref={clickAreaRef} onClick={handleClick} className="absolute inset-0 z-[210] cursor-pointer" />
+            
+            <video ref={videoRef} muted playsInline preload="auto" poster={VIDEO_POSTER} 
+              className="absolute inset-0 w-full h-full object-cover" style={{ transform: "scale(0.85)", transformOrigin: "center" }}>
               <source src={VIDEO_URL} />
             </video>
-            
-            {/* Save The Date */}
-            <div ref={textSaveRef} className="absolute inset-0 flex-col items-center justify-center z-[300]"
-              style={{ display:"none", opacity:0, pointerEvents:"none", backgroundColor:"#FDFBF7" }}>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="h-px w-16" style={{ backgroundColor:"#A3B899", opacity:0.5 }} />
-                <span style={{ color:"#A3B899", opacity:0.6, fontSize:"0.6rem" }}>✦</span>
-                <div className="h-px w-16" style={{ backgroundColor:"#A3B899", opacity:0.5 }} />
-              </div>
-              <h2 className="font-sans text-2xl md:text-4xl uppercase tracking-[0.5em] font-light" style={{ color:"#A3B899" }}>Save The Date</h2>
-            </div>
-            
-            {/* Ci Sposiamo */}
-            <div ref={textSposiamoRef} className="absolute inset-0 flex-col items-center justify-center z-[300] px-8 overflow-hidden"
-              style={{ display:"none", opacity:0, pointerEvents:"none", backgroundColor:"#FDFBF7" }}>
-              <img src={FLOWERS} onError={(e) => { e.target.style.display = 'none'; }} aria-hidden="true" className="absolute pointer-events-none select-none"
-                style={{ top:"-8%", right:"-8%", width:"clamp(220px,38vw,420px)", opacity:0.9 }} />
-              <img src={FLOWERS} onError={(e) => { e.target.style.display = 'none'; }} aria-hidden="true" className="absolute pointer-events-none select-none"
-                style={{ bottom:"-8%", left:"-8%", width:"clamp(180px,32vw,360px)", opacity:0.8, transform:"rotate(180deg)" }} />
-              <div className="flex items-center gap-4 mb-8">
-                <div className="h-px w-12 md:w-20" style={{ backgroundColor:"#A3B899", opacity:0.5 }} />
-                <span className="text-xs" style={{ color:"#A3B899", opacity:0.7 }}>✦</span>
-                <div className="h-px w-12 md:w-20" style={{ backgroundColor:"#A3B899", opacity:0.5 }} />
-              </div>
-              <p className="font-serif italic text-sm tracking-[0.5em] uppercase mb-5" style={{ color:"#A3B899" }}>Debora &amp; Luca</p>
-              <h1 className="font-serif italic font-light text-center leading-tight relative z-10"
-                style={{ color:"#7a9070", fontSize:"clamp(3rem,10vw,7rem)", letterSpacing:"0.04em" }}>Ci Sposiamo</h1>
-              <p className="font-serif italic text-xl md:text-2xl mt-4" style={{ color:"#F4B9A1" }}>5 Settembre 2026</p>
-              <div className="flex items-center gap-4 mt-8">
-                <div className="h-px w-12 md:w-20" style={{ backgroundColor:"#A3B899", opacity:0.5 }} />
-                <span className="text-xs" style={{ color:"#A3B899", opacity:0.7 }}>✦</span>
-                <div className="h-px w-12 md:w-20" style={{ backgroundColor:"#A3B899", opacity:0.5 }} />
-              </div>
-            </div>
           </div>
           
           {/* ════ MAIN CONTENT ════ */}
@@ -619,33 +585,48 @@
             
             {/* HERO */}
             <section className="relative h-screen w-full flex items-center justify-center overflow-hidden" style={{ backgroundColor:"#FDFBF7" }}>
+              
+              <VideoWatermark ref={watermarkRef} videoRef={watermarkVideoRef} />
               <Monogram ref={monogramRef} />
+              
+              {/* Testo animato "Ci Sposiamo!" - Modificato lo scale inziale a 1 */}
+              <div ref={textCiSposiamoFullscreenRef} className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0" style={{ zIndex: 2, transform: 'scale(1)', willChange: 'opacity, transform' }}>
+                <h2 className="font-serif italic text-6xl md:text-8xl" style={{ color:"#7a9070" }}>Ci Sposiamo!</h2>
+              </div>
+
               <img src={FLOWERS} onError={(e) => { e.target.style.display = 'none'; }} aria-hidden="true" className="absolute pointer-events-none select-none"
                 style={{ top:"-8%", right:"-8%", width:"clamp(280px,42vw,560px)", opacity:0.92, zIndex:1 }} />
               <img src={FLOWERS} onError={(e) => { e.target.style.display = 'none'; }} aria-hidden="true" className="absolute pointer-events-none select-none"
                 style={{ bottom:"-8%", left:"-8%", width:"clamp(220px,36vw,480px)", opacity:0.85, zIndex:1, transform:"rotate(180deg)" }} />
-              <div className="absolute left-1/2 top-0 w-px h-24" style={{ backgroundColor:"#A3B899", opacity:0.25, transform:"translateX(-50%)" }} />
-              <div className="absolute left-1/2 bottom-0 w-px h-24" style={{ backgroundColor:"#A3B899", opacity:0.25, transform:"translateX(-50%)" }} />
+              <div className="absolute left-1/2 top-0 w-px h-24" style={{ backgroundColor:"#A3B899", opacity:0.4, transform:"translateX(-50%)" }} />
+              <div className="absolute left-1/2 bottom-0 w-px h-24" style={{ backgroundColor:"#A3B899", opacity:0.4, transform:"translateX(-50%)" }} />
+              
               <div ref={heroTextRef} className="relative text-center px-6 opacity-0" style={{ transform:"translateY(40px)", zIndex:2 }}>
-                <p className="font-serif italic text-base tracking-[0.4em] uppercase mb-8" style={{ color:"#A3B899" }}>✦ &nbsp; Matrimonio &nbsp; ✦</p>
-                <h1 className="font-serif text-6xl md:text-8xl font-light mb-3 leading-none" style={{ color:"#7a9070" }}>Debora</h1>
-                <p className="font-serif italic text-2xl md:text-3xl mb-3" style={{ color:"#F4B9A1" }}>&amp;</p>
-                <h1 className="font-serif text-6xl md:text-8xl font-light mb-10 leading-none" style={{ color:"#7a9070" }}>Luca</h1>
-                <p className="font-serif italic text-lg md:text-xl leading-relaxed" style={{ color:"#A3B899" }}>
-                  Vi invitiamo a celebrare con noi<br/>il giorno del nostro matrimonio.
+                
+                <h1 className="font-serif text-6xl md:text-8xl font-normal leading-none mb-6" style={{ color:"#7a9070" }}>
+                  Debora <span style={{ color:"#F4B9A1" }}>&amp;</span> Luca
+                </h1>
+                
+                <p className="font-serif italic text-2xl md:text-3xl mb-1" style={{ color:"#7a9070" }}>Sabato</p>
+                <p className="font-serif italic text-4xl md:text-5xl mb-8 font-medium" style={{ color:"#7a9070" }}>5 Settembre 2026</p>
+                
+                <p className="font-serif italic text-2xl md:text-4xl leading-relaxed" style={{ color:"#7a9070" }}>
+                  Saremo felici di condividere con voi<br/>la gioia del nostro matrimonio.
                 </p>
               </div>
-              <div className="absolute bottom-10 left-1/2 flex flex-col items-center gap-2"
-                style={{ transform:"translateX(-50%)", zIndex:3, animation:"heroScrollFloat 2.8s ease-in-out infinite" }}>
-                <div style={{ width:"1px", height:"32px", background:"linear-gradient(to bottom,transparent,rgba(163,184,153,0.45))" }} />
-                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" style={{ opacity:0.45 }}>
-                  <path d="M1 1.5 L6 6.5 L11 1.5" stroke="#A3B899" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
+              
+              <div className="absolute bottom-8 left-1/2 flex flex-col items-center gap-3 cursor-pointer"
+                onClick={() => window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })}
+                style={{ transform:"translateX(-50%)", zIndex:3, animation:"heroScrollFloat 2.5s ease-in-out infinite" }}>
+                <span className="font-sans text-[11px] uppercase tracking-[0.3em]" style={{ color:"#7a9070", fontWeight: 600 }}>Scorri</span>
+                <svg width="28" height="16" viewBox="0 0 28 16" fill="none">
+                  <path d="M2 2 L14 14 L26 2" stroke="#7a9070" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <style>{`
                 @keyframes heroScrollFloat {
-                  0%,100%{ transform:translateX(-50%) translateY(0);   opacity:0.7; }
-                  50%     { transform:translateX(-50%) translateY(7px); opacity:1;   }
+                  0%,100%{ transform:translateX(-50%) translateY(0);   opacity:0.8; }
+                  50%     { transform:translateX(-50%) translateY(8px); opacity:1;   }
                 }
               `}</style>
             </section>
@@ -655,8 +636,9 @@
             {/* COUNTDOWN */}
             <section className="py-28 px-6 text-center reveal" style={{ backgroundColor:"#FDFBF7" }}>
               <div className="stagger-group">
-                <span className="font-serif text-2xl italic block mb-2" style={{ color:"#A3B899" }}>Sabato</span>
-                <h2 className="font-sans text-4xl md:text-6xl font-light uppercase tracking-widest mb-16" style={{ color:"#7a9070" }}>5 Settembre 2026</h2>
+                <h2 className="font-serif italic text-2xl md:text-4xl mb-12 px-4 leading-relaxed max-w-2xl mx-auto" style={{ color:"#7a9070" }}>
+                  Conto alla rovescia al giorno più Speciale della nostra Vita
+                </h2>
               </div>
               <Countdown />
             </section>
@@ -666,22 +648,24 @@
             <QuotesTicker />
             <BotanicalDivider />
             
-            {/* LOCATION */}
+            {/* LOCATION - Ridisegnata per combaciare con lo stile "La Giornata" */}
             <section className="py-24 px-6 text-center max-w-3xl mx-auto stagger-group">
-              <p className="font-serif italic text-2xl md:text-3xl leading-relaxed mb-8" style={{ color:"#A3B899" }}>
-                Non vediamo l'ora di condividere questo momento indimenticabile con le nostre persone più speciali.
-              </p>
-              <p className="font-serif text-base md:text-lg mb-10" style={{ color:"#A3B899", opacity:0.8 }}>
-                La cerimonia e il ricevimento si terranno presso il
-              </p>
-              <div className="inline-block w-full max-w-md mx-auto text-center px-8 py-8" style={{ border:"1px solid #A3B899" }}>
-                <p className="font-serif italic text-base tracking-[0.4em] uppercase mb-2" style={{ color:"#F4B9A1" }}>✦ &nbsp; Location &nbsp; ✦</p>
-                <h3 className="font-serif text-2xl md:text-3xl font-light mb-1" style={{ color:"#7a9070" }}>Ristorante Golden Gate</h3>
-                <p className="font-sans text-xs uppercase tracking-[0.3em] mb-6" style={{ color:"#A3B899", opacity:0.7 }}>Loc. La Fumosa, Bortigiadas — OT</p>
+              <div className="text-center mb-12">
+                <p className="font-serif italic text-base tracking-[0.4em] uppercase mb-3" style={{ color: "#F4B9A1" }}>✦ &nbsp; La Location &nbsp; ✦</p>
+                <h2 className="font-serif text-4xl md:text-5xl font-light" style={{ color: "#7a9070" }}>Dove Festeggeremo</h2>
+              </div>
+              
+              <div className="inline-block w-full max-w-lg mx-auto text-center px-8 py-10 rounded-xl" style={{ border:"1px solid rgba(163,184,153,0.5)", backgroundColor: "rgba(253, 251, 247, 0.8)" }}>
+                <p className="font-serif text-xl md:text-2xl leading-relaxed mb-4" style={{ color: "#7a9070" }}>
+                  La Cerimonia Civile e il Ricevimento si svolgeranno presso il
+                </p>
+                <h3 className="font-serif italic text-3xl md:text-4xl font-bold mb-6" style={{ color:"#7a9070" }}>Ristorante Golden Gate</h3>
+                <p className="font-sans text-sm uppercase tracking-[0.3em] mb-8 font-medium" style={{ color:"#7a9070" }}>Loc. La Fumosa, Bortigiadas — OT</p>
+                
                 <a href="https://www.google.com/maps?sca_esv=d22b1170cb5b1f6e&daddr=Strada+Statale+127+Settentrionale+Sarda,+07030+Bortigiadas+OT"
                   target="_blank" rel="noopener noreferrer"
-                  className="inline-block font-sans text-xs uppercase tracking-[0.35em] px-8 py-3 transition-all"
-                  style={{ color:"#FDFBF7", backgroundColor:"#A3B899" }}
+                  className="inline-block font-sans text-xs uppercase tracking-[0.35em] px-10 py-4 transition-all rounded-full"
+                  style={{ color:"#FDFBF7", backgroundColor:"#A3B899", fontWeight: "bold" }}
                   onMouseEnter={e => { e.currentTarget.style.backgroundColor="#7a9070"; }}
                   onMouseLeave={e => { e.currentTarget.style.backgroundColor="#A3B899"; }}>
                   Apri su Maps
@@ -699,16 +683,16 @@
             <footer className="relative py-14 text-center overflow-hidden">
               <img src={FLOWERS} onError={(e) => { e.target.style.display = 'none'; }} aria-hidden="true" className="absolute pointer-events-none select-none"
                 style={{ bottom:"-20%", right:"-6%", width:"clamp(180px,32vw,360px)", opacity: 0.25 }} />
-              <p className="font-serif italic text-sm mb-8" style={{ color: "#A3B899", opacity: 0.65 }}>Debora &amp; Luca · 5 Settembre 2026</p>
+              <p className="font-serif italic text-sm mb-8" style={{ color: "#7a9070", opacity: 0.85 }}>Debora &amp; Luca · 5 Settembre 2026</p>
               <div className="flex items-center justify-center gap-3 mb-2">
-                <div className="h-px w-8" style={{ backgroundColor: "#A3B899", opacity: 0.3 }} />
-                <p className="font-sans text-xs uppercase tracking-[0.3em]" style={{ color: "#A3B899", opacity: 0.6 }}>Per informazioni</p>
-                <div className="h-px w-8" style={{ backgroundColor: "#A3B899", opacity: 0.3 }} />
+                <div className="h-px w-8" style={{ backgroundColor: "#A3B899", opacity: 0.5 }} />
+                <p className="font-sans text-xs uppercase tracking-[0.3em] font-semibold" style={{ color: "#7a9070", opacity: 0.8 }}>Per informazioni</p>
+                <div className="h-px w-8" style={{ backgroundColor: "#A3B899", opacity: 0.5 }} />
               </div>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-4">
-                <a href="tel:+393455142963" className="font-serif italic text-base transition-opacity hover:opacity-80" style={{ color: "#7a9070" }}>Debora · 345 514 2963</a>
-                <span className="hidden sm:block font-serif" style={{ color: "#F4B9A1", fontSize: "0.6rem" }}>✦</span>
-                <a href="tel:+393475145114" className="font-serif italic text-base transition-opacity hover:opacity-80" style={{ color: "#7a9070" }}>Luca · 347 514 5114</a>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-4 relative z-10">
+                <a href="tel:+393455142963" className="font-serif italic text-lg transition-opacity hover:opacity-80" style={{ color: "#7a9070", fontWeight: 500 }}>Debora · 345 514 2963</a>
+                <span className="hidden sm:block font-serif" style={{ color: "#F4B9A1", fontSize: "0.8rem" }}>✦</span>
+                <a href="tel:+393475145114" className="font-serif italic text-lg transition-opacity hover:opacity-80" style={{ color: "#7a9070", fontWeight: 500 }}>Luca · 347 514 5114</a>
               </div>
             </footer>
             
