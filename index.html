@@ -52,8 +52,13 @@
     
     const MUSIC_URL = "https://res.cloudinary.com/dvjgznbzm/video/upload/v1774795778/paulyudin-romantic-piano-164822_ytzzn3.mp3";
     const VIDEO_URL = "https://res.cloudinary.com/dvjgznbzm/video/upload/f_auto,q_auto/v1774820579/busta_verde_pastello_con_data_debossing_lzadff.mp4";
+    /* Aggiunto so_0 per prendere il primissimo frame del video senza busta mezza aperta */
     const VIDEO_POSTER = "https://res.cloudinary.com/dvjgznbzm/video/upload/so_0,f_auto,q_auto/v1774820579/busta_verde_pastello_con_data_debossing_lzadff.jpg";
     const WATERMARK_VIDEO_URL = "https://res.cloudinary.com/dvjgznbzm/video/upload/v1775240241/1_Modifica_video_matrimonio_festa_notturna_online-video-cutter.com_d01pfq.mp4";
+    
+    /* Nuova immagine stilizzata della location */
+    const LOCATION_IMG = "https://res.cloudinary.com/dvjgznbzm/image/upload/v1775293975/IMG_2668_zslsvj.png";
+
     const PHOTOS = [
       "https://res.cloudinary.com/dvjgznbzm/image/upload/f_auto,q_auto,w_1400/v1774796845/IMG_4307_withcw.jpg",
       "https://res.cloudinary.com/dvjgznbzm/image/upload/f_auto,q_auto,w_1400/v1774796848/IMG_8780_y48grg.jpg",
@@ -382,7 +387,7 @@
       const [song, setSong]           = useState("");
       const [notes, setNotes]         = useState("");
       const [submitted, setSubmitted] = useState(false);
-      const inputStyle = { borderBottom: "1px solid #7a9070", color: "#4A4A4A" };
+      const inputStyle = { borderBottom: "1px solid #7a9070", color: "#4A4A4A" }; // Input resi più scuri/visibili
       return (
         <section className="py-28 md:py-40 px-6 max-w-xl mx-auto">
           <div className="text-center mb-14">
@@ -669,6 +674,14 @@
               </div>
               
               <div className="inline-block w-full max-w-lg mx-auto text-center px-8 py-10 rounded-xl" style={{ border:"1px solid rgba(163,184,153,0.5)", backgroundColor: "rgba(253, 251, 247, 0.8)" }}>
+                
+                {/* Illustrazione Location - Formato esteso */}
+                <div className="w-full mb-10 relative rounded-lg overflow-hidden shadow-[0_8px_25px_-10px_rgba(163,184,153,0.4)] border border-[#A3B899]/40">
+                  <img src={LOCATION_IMG} alt="Ristorante Golden Gate" className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-1000" style={{ filter: 'contrast(1.08) sepia(0.15)' }} />
+                  {/* Leggero filtro caldo per far intonare la foto al resto della grafica */}
+                  <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: "#F4B9A1", mixBlendMode: "multiply", opacity: 0.15 }}></div>
+                </div>
+                
                 <p className="font-serif text-xl md:text-2xl leading-relaxed mb-4" style={{ color: "#7a9070" }}>
                   La Cerimonia Civile e il Ricevimento si svolgeranno presso il
                 </p>
