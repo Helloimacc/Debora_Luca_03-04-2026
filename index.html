@@ -335,53 +335,61 @@
         obs.observe(el);
         return () => obs.disconnect();
       }, []);
+      
       return (
-        <section className="py-28 md:py-40 px-6 max-w-2xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="font-serif italic text-base tracking-[0.4em] uppercase mb-3" style={{ color: "#F4B9A1" }}>✦ &nbsp; La Giornata &nbsp; ✦</p>
-            <h2 className="font-serif text-4xl md:text-5xl font-light" style={{ color: "#7a9070" }}>Programma</h2>
-          </div>
-          <div className="relative">
-            <div className="absolute left-1/2 top-0 bottom-0 w-px" style={{ backgroundColor: "#A3B899", opacity: 0.4, transform: "translateX(-50%)" }} />
-            <div className="space-y-0 relative z-10">
-              {EVENTS.map((ev, i) => {
-                const isLeft  = i % 2 === 0;
-                const isParty = ev.moment === "Party & Live Band";
-                return (
-                  <div key={i} ref={isParty ? partyRef : undefined} className="relative flex items-center" style={{ minHeight: "5.5rem" }}>
-                    <div className={`w-1/2 pr-8 text-right ${isLeft ? "block" : "invisible"}`}>
-                      {isLeft && <>
-                        <span className="font-sans text-sm font-semibold uppercase tracking-[0.25em] block mb-1" style={{ color: "#F4B9A1" }}>{ev.time}</span>
-                        <p className="font-serif font-medium leading-tight" style={{ color: "#7a9070", fontSize: isParty?"1.2rem":"1.1rem", fontStyle: isParty?"italic":"normal" }}>
-                          {isParty ? "🎶 " : ""}{ev.moment}
-                        </p>
-                        {ev.detail && <p className="font-serif italic text-sm mt-0.5" style={{ color: "#7a9070", opacity: 0.8 }}>{ev.detail}</p>}
-                      </>}
-                    </div>
-                    <div className="absolute left-1/2 -translate-x-1/2 z-10">
-                      <div className="rounded-full border-2" style={{ width: isParty?"14px":"10px", height: isParty?"14px":"10px", borderColor: isParty?"#F4B9A1":"#A3B899", backgroundColor: isParty?"#F4B9A1":"#FDFBF7" }} />
-                    </div>
-                    <div className={`w-1/2 pl-8 ${!isLeft ? "block" : "invisible"}`}>
-                      {!isLeft && <>
-                        <span className="font-sans text-sm font-semibold uppercase tracking-[0.25em] block mb-1" style={{ color: "#F4B9A1" }}>{ev.time}</span>
-                        <p className="font-serif font-medium leading-tight" style={{ color: "#7a9070", fontSize: isParty?"1.2rem":"1.1rem", fontStyle: isParty?"italic":"normal" }}>
-                          {isParty ? "🎶 " : ""}{ev.moment}
-                        </p>
-                        {ev.detail && <p className="font-serif italic text-sm mt-0.5" style={{ color: "#7a9070", opacity: 0.8 }}>{ev.detail}</p>}
-                      </>}
-                    </div>
-                  </div>
-                );
-              })}
+        <div className="w-full">
+          <section className="pt-28 md:pt-40 pb-16 px-6 max-w-2xl mx-auto">
+            <div className="text-center mb-16">
+              <p className="font-serif italic text-base tracking-[0.4em] uppercase mb-3" style={{ color: "#F4B9A1" }}>✦ &nbsp; La Giornata &nbsp; ✦</p>
+              <h2 className="font-serif text-4xl md:text-5xl font-light" style={{ color: "#7a9070" }}>Programma</h2>
             </div>
-          </div>
+            <div className="relative">
+              <div className="absolute left-1/2 top-0 bottom-0 w-px" style={{ backgroundColor: "#A3B899", opacity: 0.4, transform: "translateX(-50%)" }} />
+              <div className="space-y-0 relative z-10">
+                {EVENTS.map((ev, i) => {
+                  const isLeft  = i % 2 === 0;
+                  const isParty = ev.moment === "Party & Live Band";
+                  return (
+                    <div key={i} ref={isParty ? partyRef : undefined} className="relative flex items-center" style={{ minHeight: "5.5rem" }}>
+                      <div className={`w-1/2 pr-8 text-right ${isLeft ? "block" : "invisible"}`}>
+                        {isLeft && <>
+                          <span className="font-sans text-sm font-semibold uppercase tracking-[0.25em] block mb-1" style={{ color: "#F4B9A1" }}>{ev.time}</span>
+                          <p className="font-serif font-medium leading-tight" style={{ color: "#7a9070", fontSize: isParty?"1.2rem":"1.1rem", fontStyle: isParty?"italic":"normal" }}>
+                            {isParty ? "🎶 " : ""}{ev.moment}
+                          </p>
+                          {ev.detail && <p className="font-serif italic text-sm mt-0.5" style={{ color: "#7a9070", opacity: 0.8 }}>{ev.detail}</p>}
+                        </>}
+                      </div>
+                      <div className="absolute left-1/2 -translate-x-1/2 z-10">
+                        <div className="rounded-full border-2" style={{ width: isParty?"14px":"10px", height: isParty?"14px":"10px", borderColor: isParty?"#F4B9A1":"#A3B899", backgroundColor: isParty?"#F4B9A1":"#FDFBF7" }} />
+                      </div>
+                      <div className={`w-1/2 pl-8 ${!isLeft ? "block" : "invisible"}`}>
+                        {!isLeft && <>
+                          <span className="font-sans text-sm font-semibold uppercase tracking-[0.25em] block mb-1" style={{ color: "#F4B9A1" }}>{ev.time}</span>
+                          <p className="font-serif font-medium leading-tight" style={{ color: "#7a9070", fontSize: isParty?"1.2rem":"1.1rem", fontStyle: isParty?"italic":"normal" }}>
+                            {isParty ? "🎶 " : ""}{ev.moment}
+                          </p>
+                          {ev.detail && <p className="font-serif italic text-sm mt-0.5" style={{ color: "#7a9070", opacity: 0.8 }}>{ev.detail}</p>}
+                        </>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
           
-          {/* Immagine Party finale */}
-          <div className="mt-16 md:mt-24 flex justify-center w-full reveal">
-             <img src={PARTY_IMG} alt="Party e balli" className="w-full max-w-[220px] md:max-w-[280px] h-auto object-contain" style={{ mixBlendMode: 'multiply', opacity: 0.85, filter: 'contrast(1.1) sepia(0.2) hue-rotate(5deg)' }} />
+          {/* Immagine Party finale a tutto schermo (edge-to-edge) con sfumatura sopra e sotto */}
+          <div className="w-full reveal overflow-hidden flex justify-center items-end mt-4">
+             <img src={PARTY_IMG} alt="Party e balli" className="w-full h-auto block" style={{ 
+               mixBlendMode: 'multiply', 
+               opacity: 0.9, 
+               filter: 'contrast(1.1) sepia(0.15)',
+               WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
+               maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)'
+             }} />
           </div>
-          
-        </section>
+        </div>
       );
     }
     
@@ -593,7 +601,6 @@
             {/* L'area cliccabile invisibile che copre tutto e fa partire il video */}
             <div ref={clickAreaRef} onClick={handleClick} className="absolute inset-0 z-[210] cursor-pointer" />
             
-            {/* Usiamo object-contain per evitare che la busta venga tagliata su schermi alti, e diminuiamo ulteriormente lo scale */}
             <video ref={videoRef} muted={true} playsInline={true} preload="auto" poster={VIDEO_POSTER} 
               className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none" style={{ transform: "scale(1.15)", transformOrigin: "center" }}>
               <source src={VIDEO_URL} type="video/mp4" />
@@ -621,7 +628,6 @@
               <div className="absolute left-1/2 top-0 w-px h-24" style={{ backgroundColor:"#A3B899", opacity:0.4, transform:"translateX(-50%)" }} />
               <div className="absolute left-1/2 bottom-0 w-px h-24" style={{ backgroundColor:"#A3B899", opacity:0.4, transform:"translateX(-50%)" }} />
               
-              {/* Contenitore principale modificato: pt aumentato dal 10% al 18% per spostare "Debora & Luca" più in giù */}
               <div ref={heroTextRef} className="absolute inset-0 flex flex-col justify-between pt-[18vh] md:pt-[20vh] pb-[16vh] px-6 text-center opacity-0 pointer-events-none" style={{ transform:"translateY(40px)", zIndex:2 }}>
                 
                 <div>
@@ -741,5 +747,6 @@
   </script>
 </body>
 </html>
+
 
 
