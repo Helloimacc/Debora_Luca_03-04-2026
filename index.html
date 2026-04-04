@@ -46,7 +46,8 @@
     const { useEffect, useRef, useState, useCallback, forwardRef } = React;
     gsap.registerPlugin(ScrollTrigger);
     
-    /* ── IMMAGINE FIORI: Al momento è un pixel trasparente per non far apparire i "?" su Safari ── */
+    /* ── IMMAGINI E RISORSE ── */
+    const HERO_FRAME = "https://res.cloudinary.com/dvjgznbzm/image/upload/v1775313532/Segnaposto_Bianco_Rosa_Elegante_Floreale_fh2yec.png";
     const FLOWERS = `data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7`;
     
     const MUSIC_URL = "https://res.cloudinary.com/dvjgznbzm/video/upload/v1774795778/paulyudin-romantic-piano-164822_ytzzn3.mp3";
@@ -54,7 +55,6 @@
     const VIDEO_POSTER = "https://res.cloudinary.com/dvjgznbzm/video/upload/so_0,f_auto,q_auto/v1774820579/busta_verde_pastello_con_data_debossing_lzadff.jpg";
     const WATERMARK_VIDEO_URL = "https://res.cloudinary.com/dvjgznbzm/video/upload/v1775240241/1_Modifica_video_matrimonio_festa_notturna_online-video-cutter.com_d01pfq.mp4";
     
-    /* Immagini stilizzate */
     const LOCATION_IMG = "https://res.cloudinary.com/dvjgznbzm/image/upload/v1775293975/IMG_2668_zslsvj.png";
     const PARTY_IMG    = "https://res.cloudinary.com/dvjgznbzm/image/upload/v1775304249/IMG_2907_jknv2c.png";
 
@@ -391,7 +391,7 @@
           
           {/* Immagine Party finale a tutto schermo con sfumatura */}
           <div className="w-full reveal overflow-hidden flex justify-center items-end mt-4">
-             <img src={PARTY_IMG} alt="Party e balli" className="w-full h-auto block" style={{ 
+             <img src={PARTY_IMG} alt="Party e balli" className="w-full h-auto block max-w-2xl mx-auto" style={{ 
                mixBlendMode: 'multiply', 
                opacity: 0.9, 
                filter: 'contrast(1.1) sepia(0.15)',
@@ -499,6 +499,7 @@
       const watermarkRef    = useRef(null);
       const watermarkVideoRef = useRef(null);
       const textCiSposiamoFullscreenRef = useRef(null);
+      const heroFrameRef    = useRef(null);
       const bgAudioRef      = useRef(null);
       const sequenceStarted = useRef(false);
       const [preloaderHidden, setPreloaderHidden] = useState(false);
@@ -581,10 +582,9 @@
           .to(monogramRef.current, { opacity: 0, scale: 0.85, duration: 1.5, ease: "power2.inOut" }, "<")
           .to(watermarkRef.current, { opacity: 0.15, duration: 1.5, ease: "power2.inOut" }, "<")
           
-          /* 3. Infine appare la schermata "Debora & Luca", la data... */
+          /* 3. Infine appare la schermata "Debora & Luca", la cornice e la freccia... */
           .to(heroTextRef.current, { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" }, "-=0.5")
-          
-          /* ...e compare anche la freccia "Scorri" */
+          .to(heroFrameRef.current, { opacity: 1, scale: 1, duration: 1.5, ease: "power3.out" }, "<")
           .to(scrollArrowRef.current, { autoAlpha: 1, duration: 1.5, ease: "power3.out" }, "<");
       }
       
@@ -626,7 +626,6 @@
             {/* L'area cliccabile invisibile che copre tutto e fa partire il video */}
             <div ref={clickAreaRef} onClick={handleClick} className="absolute inset-0 z-[210] cursor-pointer" />
             
-            {/* Usiamo object-contain per evitare che la busta venga tagliata su schermi alti, e diminuiamo ulteriormente lo scale */}
             <video ref={videoRef} muted={true} playsInline={true} preload="auto" poster={VIDEO_POSTER} 
               className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none" style={{ transform: "scale(1.15)", transformOrigin: "center" }}>
               <source src={VIDEO_URL} type="video/mp4" />
@@ -647,15 +646,22 @@
                 <h2 className="font-serif italic text-6xl md:text-8xl" style={{ color:"#7a9070" }}>Ci Sposiamo!</h2>
               </div>
 
-              <img src={FLOWERS} onError={(e) => { e.target.style.display = 'none'; }} aria-hidden="true" className="absolute pointer-events-none select-none"
-                style={{ top:"-8%", right:"-8%", width:"clamp(280px,42vw,560px)", opacity:0.92, zIndex:1 }} />
-              <img src={FLOWERS} onError={(e) => { e.target.style.display = 'none'; }} aria-hidden="true" className="absolute pointer-events-none select-none"
-                style={{ bottom:"-8%", left:"-8%", width:"clamp(220px,36vw,480px)", opacity:0.85, zIndex:1, transform:"rotate(180deg)" }} />
-              <div className="absolute left-1/2 top-0 w-px h-24" style={{ backgroundColor:"#A3B899", opacity:0.4, transform:"translateX(-50%)" }} />
-              <div className="absolute left-1/2 bottom-0 w-px h-24" style={{ backgroundColor:"#A3B899", opacity:0.4, transform:"translateX(-50%)" }} />
-              
-              {/* Contenitore principale modificato: pt aumentato dal 10% al 18% per spostare "Debora & Luca" più in giù */}
-              <div ref={heroTextRef} className="absolute inset-0 flex flex-col justify-between pt-[18vh] md:pt-[20vh] pb-[16vh] px-6 text-center opacity-0 pointer-events-none" style={{ transform:"translateY(40px)", zIndex:2 }}>
+              {/* Nuova Cornice Floreale per Hero Section */}
+              <div ref={heroFrameRef} className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0" style={{ zIndex: 1, transform: 'scale(0.95)', willChange: 'opacity, transform' }}>
+                <img 
+                  src={HERO_FRAME} 
+                  alt="" 
+                  className="w-full h-full object-cover md:object-contain" 
+                  style={{ 
+                    mixBlendMode: "multiply",
+                    WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
+                    maskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)"
+                  }} 
+                />
+              </div>
+
+              {/* Contenitore testi: Modificati i padding (pt e pb) e aggiunto un margine laterale (px-10 max-w-lg) per tenerli lontani dai fiori */}
+              <div ref={heroTextRef} className="absolute inset-0 flex flex-col justify-between pt-[24vh] md:pt-[26vh] pb-[22vh] px-10 md:px-16 text-center opacity-0 pointer-events-none mx-auto max-w-lg" style={{ transform:"translateY(40px)", zIndex:2 }}>
                 
                 <div>
                   <h1 className="font-serif text-5xl md:text-7xl font-normal leading-none" style={{ color:"#7a9070", textShadow: "0 4px 20px rgba(253, 251, 247, 0.6)" }}>
@@ -705,7 +711,7 @@
             
             <BotanicalDivider />
             
-            {/* LOCATION - Ridisegnata per combaciare con lo stile "La Giornata" */}
+            {/* LOCATION */}
             <section className="py-28 md:py-40 px-6 text-center max-w-3xl mx-auto stagger-group">
               <div className="text-center mb-12">
                 <p className="font-serif italic text-base tracking-[0.4em] uppercase mb-3" style={{ color: "#F4B9A1" }}>✦ &nbsp; La Location &nbsp; ✦</p>
@@ -714,7 +720,7 @@
               
               <div className="inline-block w-full max-w-lg mx-auto text-center px-8 py-10 rounded-xl" style={{ border:"1px solid rgba(163,184,153,0.5)", backgroundColor: "rgba(253, 251, 247, 0.8)" }}>
                 
-                {/* Illustrazione Location - Formato esteso */}
+                {/* Illustrazione Location */}
                 <div className="w-full mb-10 relative rounded-lg overflow-hidden shadow-[0_8px_25px_-10px_rgba(163,184,153,0.4)] border border-[#A3B899]/40">
                   <img src={LOCATION_IMG} alt="Ristorante Golden Gate" className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-1000" style={{ filter: 'contrast(1.08) sepia(0.15)' }} />
                   <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: "#F4B9A1", mixBlendMode: "multiply", opacity: 0.15 }}></div>
@@ -748,8 +754,6 @@
             
             {/* FOOTER */}
             <footer className="relative py-20 md:py-28 text-center overflow-hidden">
-              <img src={FLOWERS} onError={(e) => { e.target.style.display = 'none'; }} aria-hidden="true" className="absolute pointer-events-none select-none"
-                style={{ bottom:"-20%", right:"-6%", width:"clamp(180px,32vw,360px)", opacity: 0.25 }} />
               <p className="font-serif italic text-sm mb-8" style={{ color: "#7a9070", opacity: 0.85 }}>Debora &amp; Luca · 5 Settembre 2026</p>
               <div className="flex items-center justify-center gap-3 mb-2">
                 <div className="h-px w-8" style={{ backgroundColor: "#A3B899", opacity: 0.5 }} />
@@ -765,7 +769,6 @@
             
           </div>
           
-          <MusicPlayer playing={musicPlaying} onToggle={toggleMusic} />
         </>
       );
     }
@@ -774,7 +777,5 @@
   </script>
 </body>
 </html>
-
-
 
 
